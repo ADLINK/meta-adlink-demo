@@ -9,7 +9,7 @@ DEPENDS += " \
 SRC_URI = "\
     file://adlink-startup.service \
     file://adlink-startup-intel \
-    file://adlink-startup-imx8mp \
+    file://adlink-startup-imx8 \
 "
 
 inherit pkgconfig systemd update-rc.d useradd
@@ -26,23 +26,23 @@ GROUPADD_PARAM_${PN} = "root"
 USERADD_PARAM_${PN} = "--system -M -d /var/lib/adlink -s /bin/false -g root root"
 
 do_install() {
-  if ${@bb.utils.contains("DISTRO_FEATURES", 'systemd', 'true', 'false', d)}; then
+  if ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'true', 'false', d)}; then
     install -d "${D}${sbindir}"
-    if ${@bb.utils.contains("MACHINE", 'intel-corei7-64', 'true', 'false', d)}; then
+    if ${@bb.utils.contains('MACHINE', 'intel-corei7-64', 'true', 'false', d)}; then
       install -m 0755 ${WORKDIR}/adlink-startup-intel ${D}${sbindir}/${INITSCRIPT_NAME}
     fi
-    if ${@bb.utils.contains("MACHINE", 'lec-imx8mp', 'true', 'false', d)}; then
-      install -m 0755 ${WORKDIR}/adlink-startup-imx8mp ${D}${sbindir}/${INITSCRIPT_NAME}
+    if ${@bb.utils.contains_any('MACHINE', 'lec-imx8m lec-imx8mp', 'true', 'false', d)}; then
+      install -m 0755 ${WORKDIR}/adlink-startup-imx8 ${D}${sbindir}/${INITSCRIPT_NAME}
     fi
     install -d "${D}${systemd_unitdir}/system"
     install -m 0644 "${WORKDIR}/adlink-startup.service" "${D}${systemd_unitdir}/system/adlink-startup.service"
   else
     install -d "${D}${sysconfdir}/init.d"
-    if ${@bb.utils.contains("MACHINE", 'intel-corei7-64', 'true', 'false', d)}; then
+    if ${@bb.utils.contains('MACHINE', 'intel-corei7-64', 'true', 'false', d)}; then
       install -m 0755 ${WORKDIR}/adlink-startup-intel ${D}${sysconfdir}/init.d/${INITSCRIPT_NAME}
     fi
-    if ${@bb.utils.contains("MACHINE", 'lec-imx8mp', 'true', 'false', d)}; then
-      install -m 0755 ${WORKDIR}/adlink-startup-imx8mp ${D}${sysconfdir}/init.d/${INITSCRIPT_NAME}
+    if ${@bb.utils.contains_any('MACHINE', 'lec-imx8m lec-imx8mp', 'true', 'false', d)}; then
+      install -m 0755 ${WORKDIR}/adlink-startup-imx8 ${D}${sysconfdir}/init.d/${INITSCRIPT_NAME}
     fi
   fi
 }
