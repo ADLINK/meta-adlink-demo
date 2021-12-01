@@ -30,7 +30,7 @@ RDEPENDS_packagegroup-adlink = " \
     ${@bb.utils.contains('DISTRO_FEATURES', 'benchmarks', 'packagegroup-adlink-benchmarks', '', d)} \
     ${@bb.utils.contains('MACHINE_FEATURES', 'wifi', 'packagegroup-adlink-wifi', '', d)} \
     ${@bb.utils.contains('MACHINE_FEATURES', 'bluetooth', 'packagegroup-adlink-bluetooth', '', d)} \
-    ${@bb.utils.contains('DISTRO_FEATURES', 'adlink', 'packagegroup-adlink-utils', '', d)} \
+    ${@bb.utils.contains('DISTRO_FEATURES', 'utils', 'packagegroup-adlink-utils', '', d)} \
     ${@bb.utils.contains('DISTRO_FEATURES', 'debug', 'packagegroup-adlink-debug', '', d)} \
     ${@bb.utils.contains('DISTRO_FEATURES', 'ci', 'packagegroup-adlink-ci', '', d)} \
 "
@@ -147,8 +147,6 @@ RDEPENDS_packagegroup-adlink-utils = " \
     minicom \
     mmc-utils \
     net-tools \
-    openssh \
-    openssh-sftp-server \
     parted \
     picocom \
     python3 \
@@ -156,7 +154,7 @@ RDEPENDS_packagegroup-adlink-utils = " \
     v4l-utils \
     wget \
     ${@bb.utils.contains('PACKAGE_CLASSES', 'package_rpm', 'dnf', '', d)} \
-    ${@bb.utils.contains('IMAGE_FEATURES', 'ssh-server-openssh', 'packagegroup-core-ssh-openssh', '', d)} \
+    ${@bb.utils.contains('IMAGE_FEATURES', 'ssh-server-openssh', 'packagegroup-core-ssh-openssh openssh openssh-sftp-server', '', d)} \
 "
 
 #
