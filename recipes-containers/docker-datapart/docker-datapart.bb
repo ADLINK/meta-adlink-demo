@@ -181,6 +181,7 @@ do_compile () {
 	CONTAINER_NAME="${DOCKERHUB_IMAGE}-${DOCKERHUB_TAG}-$RANDOM"
 	$DOCKER rmi ${IMAGE_NAME} > /dev/null 2>&1 || true
 	$DOCKER build -t ${IMAGE_NAME} -f ${WORKDIR}/Dockerfile ${WORKDIR}
+	$DOCKER run --privileged --rm multiarch/qemu-user-static --reset -p yes
 	$DOCKER run --privileged --rm \
 		-e STORAGE_DRIVER=${CONTAINER_STORAGE_DRIVER_TYPE} \
 		-e USER_ID=$(id -u) -e USER_GID=$(id -u) \

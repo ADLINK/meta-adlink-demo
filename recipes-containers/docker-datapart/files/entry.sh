@@ -56,17 +56,17 @@ fi
 if [ -n "${TARGET_REPOSITORY}" -a -n "${TARGET_TAG}" ]; then
     if [ -z "${TARGET_PLATFORM}" ]; then
       echo "[INFO] Pulling ${TARGET_REPOSITORY}:${TARGET_TAG}..."
-      docker pull "${TARGET_PLATFORM}" "${TARGET_REPOSITORY}:${TARGET_TAG}" || echo "[WARN] Unabe to pull from dockerhub, skip..."
+      docker pull "${TARGET_REPOSITORY}:${TARGET_TAG}" || echo "[WARN] Unabe to pull from dockerhub, skip..."
     else
       echo "[INFO] Pulling --platform ${TARGET_PLATFORM} ${TARGET_REPOSITORY}:${TARGET_TAG}..."
-      docker pull --platform "${TARGET_PLATFORM}" "${TARGET_REPOSITORY}:${TARGET_TAG}" || echo "[WARN] Unabe to pull from dockerhub, skip..."
+      docker pull --platform="${TARGET_PLATFORM}" "${TARGET_REPOSITORY}:${TARGET_TAG}" || echo "[WARN] Unabe to pull from dockerhub, skip..."
     fi
 fi
 
 # Pull in arch specific hello-world image and tag it healthcheck-image
 if [ -n "${HEALTHCHECK_REPOSITORY}" ]; then
   echo "[INFO] Pulling ${HEALTHCHECK_REPOSITORY}:latest..."
-  docker pull --platform "${HEALTHCHECK_PLATFORM}" "${HEALTHCHECK_REPOSITORY}"
+  docker pull --platform="${TARGET_PLATFORM}" "${HEALTHCHECK_REPOSITORY}"
   docker tag "${HEALTHCHECK_REPOSITORY}" ${HEALTHCHECK_EXPORT_IMAGE//${IMAGE_SUFFIX}}
   docker rmi "${HEALTHCHECK_REPOSITORY}"
   docker save ${HEALTHCHECK_EXPORT_IMAGE//${IMAGE_SUFFIX}} > ${BUILD}/${HEALTHCHECK_EXPORT_IMAGE}
@@ -75,9 +75,10 @@ fi
 # Import the container image from local build
 if [ -n "${CONTAINER_IMAGE}" ]; then
   for dimg in ${CONTAINER_IMAGE}; do
+    echo "[WARN] Importing in DinD is NOT platform-aware all docker tar.gz are imported as x86_64 architecture."
     echo "[INFO] Importing ${SRC}/${dimg}..."
     if [ -f "${SRC}/${dimg}" ]; then
-      docker import ${SRC}/${dimg} ${dimg//".${CONTAINER_SUFFIX}"}:latest
+      docker image import ${SRC}/${dimg} ${dimg//".${CONTAINER_SUFFIX}"}:latest
     else
       echo "[WARN] ${SRC}/${dimg} does not exist"
     fi
