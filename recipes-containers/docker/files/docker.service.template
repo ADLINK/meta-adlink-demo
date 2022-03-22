@@ -1,7 +1,7 @@
 [Unit]
 Description=Docker Application Container Engine
 Documentation=https://docs.docker.com
-After=network-online.target docker.socket firewalld.service
+After=network-online.target docker.socket firewalld.service @EXTRA_DOCKER_WAIT_SERVICE@
 Wants=network-online.target
 Requires=docker.socket
 
