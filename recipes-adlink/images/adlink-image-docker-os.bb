@@ -81,3 +81,20 @@ IMAGE_CMD_dataimg_prepend () {
     tar zxf ${DEPLOY_DIR_IMAGE}/${TARGET_DOCKER_PARTITION_IMAGE}.${IMAGE_COMPRESS_TYPE} -C ${IMAGE_ROOTFS}${MOUNT_PREFIX}${DOCKER_PARTITION_MOUNT_PATH} .
   fi
 }
+
+
+ROOTFS_POSTPROCESS_COMMAND += " rpi_ipv4forward_sysctl_config ; "
+
+rpi_ipv4forward_sysctl_config() {
+  if ${@bb.utils.contains_any('MACHINE', 'raspberrypi3-64 raspberrypi3', 'true', 'false', d)} ; then
+    # systemd sysctl config
+    test -d ${IMAGE_ROOTFS}${sysconfdir}/sysctl.d && \
+        echo "net.ipv4.ip_forward = 1" > ${IMAGE_ROOTFS}${sysconfdir}/sysctl.d/rpi-ipv4-forward.conf
+
+    # sysv sysctl config
+    IMAGE_SYSCTL_CONF="${IMAGE_ROOTFS}${sysconfdir}/sysctl.conf"
+    test -e ${IMAGE_ROOTFS}${sysconfdir}/sysctl.conf && \
+        sed -e "/net.ipv4.ip_forward/d" -i ${IMAGE_SYSCTL_CONF}
+    echo "net.ipv4.ip_forward = 1" >> ${IMAGE_SYSCTL_CONF}
+  fi
+}
