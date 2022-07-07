@@ -7,7 +7,7 @@ SRCSERVER = "gitsm://github.com/po-cheng-adlink/lava-lab.git"
 SRCBRANCH = "ci-box-builder"
 SRCOPTIONS = ";protocol=https"
 SRCOPTIONS_append_private = ";user=${PRIVATE_USER}:${PRIVATE_TOKEN}"
-SRCREV = "b28107c036d7b5116b5518c9400f50ace3464663"
+SRCREV = "0c6b04fde18d86a1a26ea94b26eca18d056f18d9"
 SRC_URI = "${SRCSERVER};branch=${SRCBRANCH}${SRCOPTIONS}"
 
 S = "${WORKDIR}/git"
