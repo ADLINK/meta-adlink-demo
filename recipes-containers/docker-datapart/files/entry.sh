@@ -75,10 +75,9 @@ fi
 # Import the container image from local build
 if [ -n "${CONTAINER_IMAGE}" ]; then
   for dimg in ${CONTAINER_IMAGE}; do
-    echo "[WARN] Importing in DinD is NOT platform-aware all docker tar.gz are imported as x86_64 architecture."
     echo "[INFO] Importing ${SRC}/${dimg}..."
     if [ -f "${SRC}/${dimg}" ]; then
-      docker image import ${SRC}/${dimg} ${dimg//".${CONTAINER_SUFFIX}"}:latest
+      docker image load -i ${SRC}/${dimg}
     else
       echo "[WARN] ${SRC}/${dimg} does not exist"
     fi
