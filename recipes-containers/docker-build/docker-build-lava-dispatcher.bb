@@ -17,9 +17,42 @@ include docker-build.inc
 
 DOCKER_COMPOSE_IMAGE = "lava-worker"
 
+do_configure[prefuncs] += "reconfigure_lava_dispatcher"
+python reconfigure_lava_dispatcher() {
+    default = None
+    srcdir = d.getVar("S")
+    tgtplatform = d.getVar("TARGET_PLATFORM")
+    if tgtplatform in ('linux/arm64', 'linux/amd64'):
+      with open("%s/ci-box-conf.yaml" % srcdir, "r+") as fd:
+        import yaml
+        ciboxconf = yaml.safe_load(fd)
+        for slave in ciboxconf["slaves"]:
+          if "rpi3" in slave['name'] or len(ciboxconf["slaves"]) == 1:
+            slave['arch'] = tgtplatform
+            slave['default_slave'] = True
+            default = slave['name']
+          else:
+            if 'default_slave' in slave and slave['default_slave'] and default is not None:
+              slave['default_slave'] = False
+        fd.seek(0)
+        fd.truncate()
+        yaml.safe_dump(ciboxconf, fd, default_flow_style=False)
+    else:
+      bb.warn("TARGET_PLATFORM: %s not recognized" % tgtplatform)
+}
+
 do_configure_prepend () {
 	cd ${S}
-	./ci-box-gen.sh
+	./ci-box-gen.sh slaves
+}
+
+do_install_append () {
+	# copy the ci-box-lava-worker/ to /home/adlink/ci-box-lava-worker
+	install -d ${D}/home/adlink/
+	cp -rf ${S}/ci-box-lava-worker ${D}/home/adlink/
+	if [ -f ${S}/docker-compose.yml ]; then
+		install -m 0644 ${S}/docker-compose.yml ${D}/home/adlink/docker-compose.yml
+	fi
 }
 
 inherit deploy
@@ -41,3 +74,5 @@ do_deploy () {
 	fi
 }
 addtask deploy before do_package after do_compile
+
+FILES_${PN} += "/home/adlink/ci-box-lava-worker /home/adlink/docker-compose.yml"
