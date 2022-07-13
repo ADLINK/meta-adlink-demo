@@ -17,6 +17,17 @@ include docker-build.inc
 
 DOCKER_COMPOSE_IMAGE = "lava-worker"
 
+DEPENDS_append = " ipxe-bin"
+do_ipxe_fetch () {
+    if [ -f ${DEPLOY_DIR}/share/intel.efi ]; then
+        bbnote "Copy intel.efi to ci-box-lava-worker/configs/"
+        install -m 0644 ${DEPLOY_DIR}/share/intel.efi ${S}/ci-box-lava-worker/configs/
+    else
+        bbwarn "No intel.efi found in ${DEPLOY_DIR}/share, ipxe binary not copied to lava-dispatcher!"
+    fi
+}
+addtask ipxe_fetch before do_configure after do_unpack
+
 do_configure[prefuncs] += "reconfigure_lava_dispatcher"
 python reconfigure_lava_dispatcher() {
     default = None
