@@ -10,6 +10,9 @@ ExecStart=/usr/bin/env /usr/bin/docker-compose -f @DOCKER_COMPOSE_FILE@ up -d
 ExecStop=/usr/bin/env /usr/bin/docker-compose -f @DOCKER_COMPOSE_FILE@ stop
 StandardOutput=syslog
 RemainAfterExit=yes
+PermissionsStartOnly=true
+ExecStartPre=-/bin/sh -c '/home/adlink/udev_reload.sh'
+ExecStartPost=/bin/sh -c '/home/adlink/udev-forward.sh'
 
 [Install]
 WantedBy=multi-user.target
