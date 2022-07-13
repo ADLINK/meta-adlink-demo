@@ -61,9 +61,22 @@ do_install_append () {
 	# copy the ci-box-lava-worker/ to /home/adlink/ci-box-lava-worker
 	install -d ${D}/home/adlink/
 	cp -rf ${S}/ci-box-lava-worker ${D}/home/adlink/
+	# copy generated udev rules and scripts to reload udev for udev-forward-service
+	cp -rf ${S}/udev ${D}/home/adlink/
+	sed -i 's|/home/jenkins.*/udev-forward|${systemd_unitdir}/system/udev-forward|g' ${S}/udev-forward.sh
+	install -m 0755 ${S}/udev-forward.sh ${D}/home/adlink/
+	install -m 0755 ${S}/udev_reload.sh ${D}/home/adlink/
+	# copy docker-comppose.yml for docker-compose-service
 	if [ -f ${S}/docker-compose.yml ]; then
 		install -m 0644 ${S}/docker-compose.yml ${D}/home/adlink/docker-compose.yml
 	fi
+	# add/enable the udev-forward.service to systemd
+	cp -rf ${S}/docker-udev-tools ${D}/home/adlink/
+	sed -i 's|/home/jenkins/.*udev-forward|/home/adlink/docker-udev-tools/udev-forward|g' ${S}/udev-forward.service
+	install -d ${D}${systemd_unitdir}/system/
+	install -d ${D}${sysconfdir}/systemd/system/multi-user.target.wants/
+	install -m 0644 ${S}/udev-forward.service ${D}${systemd_unitdir}/system/udev-forward.service
+	ln -sf ${systemd_unitdir}/system/udev-forward.service ${D}${sysconfdir}/systemd/system/multi-user.target.wants/udev-forward.service
 }
 
 inherit deploy
@@ -86,4 +99,7 @@ do_deploy () {
 }
 addtask deploy before do_package after do_compile
 
-FILES_${PN} += "/home/adlink/ci-box-lava-worker /home/adlink/docker-compose.yml"
+RDEPENDS_${PN} += "python3-pyudev"
+
+FILES_${PN} += "/home/adlink/ ${sysconfdir}/systemd/system/multi-user.target.wants/ ${systemd_unitdir}/system/"
+
