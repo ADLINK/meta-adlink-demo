@@ -25,6 +25,11 @@ IMAGE_INSTALL = "\
 	dnsmasq \
 	iptables \
 	wget \
+	lsof \
+	wpa-supplicant \
+	iw \
+	bridge-utils \
+	flashrom \
 	"
 
 # Select Image Features
@@ -43,7 +48,7 @@ CORE_IMAGE_EXTRA_INSTALL += " \
     ${@bb.utils.contains('MACHINE_FEATURES', 'wifi', 'wpa-supplicant', '', d)} \
 "
 
-CORE_IMAGE_EXTRA_INSTALL_append_raspberrypi3-64 = " raspi-gpio rpi-gpio ipxe-bin"
+CORE_IMAGE_EXTRA_INSTALL_append_raspberrypi3-64 = " raspi-gpio rpi-gpio ipxe-bin dnsmasq python3-pyudev docker-build-lava-dispatcher docker-compose-service"
 
 # raw image setting
 IMAGE_ROOTFS_SIZE ?= "8192"
