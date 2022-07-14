@@ -71,6 +71,9 @@ do_install_append () {
 		install -m 0644 ${S}/docker-compose.yml ${D}/home/adlink/docker-compose.yml
 	fi
 	# add/enable the udev-forward.service to systemd
+	# replace syslog.LOG_DEBUG to 7 (from syslog.h) as yocto has no python3-syslog
+	sed -i 's|import syslog||g' ${S}/docker-udev-tools/udev-forward.py
+	sed -i 's|syslog.LOG_DEBUG|7|g' ${S}/docker-udev-tools/udev-forward.py
 	cp -rf ${S}/docker-udev-tools ${D}/home/adlink/
 	sed -i 's|/home/jenkins/.*udev-forward|/home/adlink/docker-udev-tools/udev-forward|g' ${S}/udev-forward.service
 	install -d ${D}${systemd_unitdir}/system/
