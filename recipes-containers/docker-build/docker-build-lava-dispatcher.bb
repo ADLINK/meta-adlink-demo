@@ -53,6 +53,7 @@ python reconfigure_lava_dispatcher() {
 }
 
 do_configure_prepend () {
+	sed -i 's/lava_master=remote_master/lava_master=remote_address/g' ${S}/ci-box-gen.py
 	cd ${S}
 	./ci-box-gen.sh slaves
 }
