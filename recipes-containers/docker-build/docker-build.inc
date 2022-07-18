@@ -76,6 +76,12 @@ do_compile () {
 	DOCKER=$(PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" which docker)
 	DOCKERCOMPOSE=$(PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" which docker-compose)
 
+	bbnote "Remove existing docker image..."
+	# docker-compose build the docker image
+	if $DOCKER images | grep -q ${DOCKER_IMAGE_PREFIX}${DOCKER_COMPOSE_IMAGE}; then
+		$DOCKER rmi ${DOCKER_IMAGE_PREFIX}/${DOCKER_COMPOSE_IMAGE}
+	fi
+
 	bbnote "Starting building docker image..."
 	# docker-compose build the docker image
 	if [ -z "${DOCKER_COMPOSE_IMAGE}" ]; then
