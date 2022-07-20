@@ -8,6 +8,11 @@ SRC_URI_remove = " \
 
 DEPENDS += "coreutils-native"
 
+do_post_patch () {
+    sed -e "s|//#define.*CONSOLE_SERIAL|#define\tCONSOLE_SERIAL|g" -i ${S}/config/console.h
+}
+addtask post_patch after do_patch before do_configure
+
 IPXE_PLATFORM = '${@bb.utils.contains("BBMULTICONFIG", "genericx86", "bin-i386-efi/", \
 bb.utils.contains("BBMULTICONFIG", "genericx86-64", "bin-x86_64-efi/", "", d), d)}'
 EXTRA_OEMAKE_append = " ${IPXE_PLATFORM}intel.efi"
