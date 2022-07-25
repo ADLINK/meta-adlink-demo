@@ -12,7 +12,6 @@ StandardOutput=syslog
 RemainAfterExit=yes
 PermissionsStartOnly=true
 ExecStartPre=-/bin/sh -c '/home/adlink/udev_reload.sh'
-ExecStartPost=/bin/sh -c '/home/adlink/udev-forward.sh'
 
 [Install]
 WantedBy=multi-user.target
