@@ -63,6 +63,7 @@ do_install_append () {
 	install -d ${D}/home/adlink/
 	cp -rf ${S}/ci-box-lava-worker ${D}/home/adlink/
 	# copy generated udev rules and scripts to reload udev for udev-forward-service
+	sed -i 's|/home/jenkins.*/docker-udev-tools/|/home/adlink/docker-udev-tools/|g' ${S}/udev/99-lavaworker-udev.rules
 	cp -rf ${S}/udev ${D}/home/adlink/
 	sed -i 's|/home/jenkins.*/udev-forward|${systemd_unitdir}/system/udev-forward|g' ${S}/udev-forward.sh
 	install -m 0755 ${S}/udev-forward.sh ${D}/home/adlink/
