@@ -4,10 +4,10 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda
 
 PR = "r0"
 SRCSERVER = "gitsm://github.com/po-cheng-adlink/lava-lab.git"
-SRCBRANCH = "ci-box-builder"
+SRCBRANCH = "ci-box-2022.03"
 SRCOPTIONS = ";protocol=https"
 SRCOPTIONS_append_private = ";user=${PRIVATE_USER}:${PRIVATE_TOKEN}"
-SRCREV = "0b0771e4ed1e63d68b2e70be4b766bf4ab20d4b4"
+SRCREV = "6a6a12812d7677d8fda1e9d6bfe226aecf56c3a3"
 SRC_URI = "${SRCSERVER};branch=${SRCBRANCH}${SRCOPTIONS}"
 
 S = "${WORKDIR}/git"
