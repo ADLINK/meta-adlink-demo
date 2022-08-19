@@ -6,7 +6,7 @@ PR = "r0"
 SRCSERVER = "gitsm://github.com/po-cheng-adlink/lava-lab.git"
 SRCBRANCH = "ci-box-2022.03"
 SRCOPTIONS = ";protocol=https"
-SRCOPTIONS_append_private = ";user=${PRIVATE_USER}:${PRIVATE_TOKEN}"
+SRCOPTIONS:append:private = ";user=${PRIVATE_USER}:${PRIVATE_TOKEN}"
 SRCREV = "6a6a12812d7677d8fda1e9d6bfe226aecf56c3a3"
 SRC_URI = "${SRCSERVER};branch=${SRCBRANCH}${SRCOPTIONS}"
 
@@ -17,7 +17,7 @@ include docker-build.inc
 
 DOCKER_COMPOSE_IMAGE = "lava-worker"
 
-DEPENDS_append = " ipxe-bin"
+DEPENDS:append = " ipxe-bin"
 do_ipxe_fetch () {
     if [ -f ${DEPLOY_DIR}/share/intel.efi ]; then
         bbnote "Copy intel.efi to ci-box-lava-worker/configs/"
@@ -52,13 +52,13 @@ python reconfigure_lava_dispatcher() {
       bb.warn("TARGET_PLATFORM: %s not recognized" % tgtplatform)
 }
 
-do_configure_prepend () {
+do_configure:prepend () {
 	sed -i 's/lava_master=remote_master/lava_master=remote_address/g' ${S}/ci-box-gen.py
 	cd ${S}
 	./ci-box-gen.sh slaves
 }
 
-do_install_append () {
+do_install:append () {
 	# copy the ci-box-lava-worker/ to /home/adlink/ci-box-lava-worker
 	install -d ${D}/home/adlink/
 	cp -rf ${S}/ci-box-lava-worker ${D}/home/adlink/
@@ -105,7 +105,7 @@ do_deploy () {
 }
 addtask deploy before do_package after do_compile
 
-RDEPENDS_${PN} += "python3-pyudev"
+RDEPENDS:${PN} += "python3-pyudev"
 
-FILES_${PN} += "/home/adlink/ ${sysconfdir}/systemd/system/multi-user.target.wants/ ${systemd_unitdir}/system/"
+FILES:${PN} += "/home/adlink/ ${sysconfdir}/systemd/system/multi-user.target.wants/ ${systemd_unitdir}/system/"
 

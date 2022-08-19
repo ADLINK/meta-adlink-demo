@@ -1,4 +1,4 @@
-FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
+FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 
 SRC_URI += " \
 file://docker.service.template \
@@ -10,7 +10,7 @@ DOCKER_PARTITION_MOUNT_PATH ?= "/var/lib/docker"
 
 MOUNT_PREFIX = ""
 
-do_install_append () {
+do_install:append () {
 	if ${@bb.utils.contains('DISTRO_FEATURES','systemd','true','false',d)}; then
 		install -m 644 ${WORKDIR}/docker.service.template ${D}/${systemd_unitdir}/system/docker.service
 		sed -e "s|\@EXTRA_DOCKER_WAIT_SERVICE\@|${EXTRA_DOCKER_WAIT_SERVICE}|g" -i ${D}/${systemd_unitdir}/system/docker.service
@@ -25,4 +25,4 @@ do_install_append () {
 	fi
 }
 
-FILES_${PN} += "${sysconfdir}/systemd/system/multi-user.target.wants/"
+FILES:${PN} += "${sysconfdir}/systemd/system/multi-user.target.wants/"

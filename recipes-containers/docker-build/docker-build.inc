@@ -51,7 +51,7 @@ DOCKER_COMPOSE_IMAGE ?= ""
 
 # NOTE: Host Build Environment must provide docker and docker-compose commands
 
-INSANE_SKIP_${PN} += "already-stripped"
+INSANE_SKIP:${PN} += "already-stripped"
 SKIP_FILEDEPS = "1"
 EXCLUDE_FROM_SHLIBS = "1"
 
@@ -103,4 +103,4 @@ do_compile () {
 	fi
 }
 
-FILES_${PN} += "${DOCKER_COMPOSE_IMAGE}.tar"
+FILES:${PN} += "${DOCKER_COMPOSE_IMAGE}.tar"

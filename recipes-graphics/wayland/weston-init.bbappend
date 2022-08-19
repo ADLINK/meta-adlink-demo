@@ -29,4 +29,4 @@ fi
 
 }
 
-FILES_${PN} += "${sysconfdir}/xdg/weston/weston.ini"
+FILES:${PN} += "${sysconfdir}/xdg/weston/weston.ini"

@@ -2,7 +2,7 @@ SUMMARY = "Package a systemd docker-container.service for docker containers in t
 LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda2f7b4f302"
 
-FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
+FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 
 SRC_URI = "file://docker-container.service.template"
 
@@ -26,6 +26,6 @@ do_install () {
 	ln -sf ${systemd_unitdir}/system/docker-container.service ${D}${sysconfdir}/systemd/system/multi-user.target.wants/docker-container.service
 }
 
-FILES_${PN} += "/lib/systemd/system/"
+FILES:${PN} += "/lib/systemd/system/"
 
-RDEPENDS_${PN} += "systemd-container"
+RDEPENDS:${PN} += "systemd-container"

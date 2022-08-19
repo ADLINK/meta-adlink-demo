@@ -67,7 +67,7 @@ RDEPENDS:packagegroup-adlink-benchmarks = " \
 # packages added by adlink tools for wifi
 #
 SUMMARY:packagegroup-adlink-wifi = "Adlink wifi Support"
-RDEPENDS_packagegroup-adlink-wifi = " \
+RDEPENDS:packagegroup-adlink-wifi = " \
     iperf3 \
     iw \
     rfkill \

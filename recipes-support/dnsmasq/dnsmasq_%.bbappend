@@ -26,7 +26,7 @@ dhcp-lease-max=20\n\
 
 EXTRA_SYSTEMD_AFTER ?= "${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'systemd-networkd.service systemd-resolved.service', '', d)}"
 
-do_install_append () {
+do_install:append () {
   if [ -n "${ALTERNATIVE_DNSMASQ_CONFIG}" ]; then
     install -d ${D}/etc/dnsmasq.d
     echo "${ALTERNATIVE_DNSMASQ_CONFIG}" | tee -a ${D}/${sysconfdir}/dnsmasq.d/alternative.conf

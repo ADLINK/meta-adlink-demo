@@ -22,4 +22,4 @@ do_install() {
     fi
 }
 
-FILES_${PN} = "/tftproot/*"
+FILES:${PN} = "/tftproot/*"

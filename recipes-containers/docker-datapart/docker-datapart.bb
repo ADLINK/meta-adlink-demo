@@ -2,7 +2,7 @@ DESCRIPTION = "Package to create Docker data partition image using sibling conta
 LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda2f7b4f302"
 
-INSANE_SKIP_${PN} += "already-stripped"
+INSANE_SKIP:${PN} += "already-stripped"
 SKIP_FILEDEPS = "1"
 EXCLUDE_FROM_SHLIBS = "1"
 
@@ -221,7 +221,7 @@ addtask deploy before do_package after do_install
 
 do_install[fakeroot] = "1"
 
-fakeroot do_install_append() {
+fakeroot do_install:append() {
 	if [ -n "${DOCKER_PARTITION_MOUNT_PATH}" ]; then
 		install -d ${D}${DOCKER_PARTITION_MOUNT_PATH}
 		if [ -f ${B}/${EXPORT_DOCKER_PARTITION_IMAGE}.${IMAGE_COMPRESS_TYPE} ]; then
@@ -232,4 +232,4 @@ fakeroot do_install_append() {
 	fi
 }
 
-FILES_${PN} += "${DOCKER_PARTITION_MOUNT_PATH}"
+FILES:${PN} += "${DOCKER_PARTITION_MOUNT_PATH}"
