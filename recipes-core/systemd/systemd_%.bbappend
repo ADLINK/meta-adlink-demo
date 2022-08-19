@@ -1,1 +1,1 @@
-RDEPENDS_${PN} += "wpa-supplicant"
+RDEPENDS:${PN} += "wpa-supplicant"

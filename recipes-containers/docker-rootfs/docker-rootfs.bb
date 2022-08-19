@@ -2,7 +2,7 @@ DESCRIPTION = "Package to create a rootfs.cpio using docker container"
 LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda2f7b4f302"
 
-INSANE_SKIP_${PN} += "already-stripped"
+INSANE_SKIP:${PN} += "already-stripped"
 SKIP_FILEDEPS = "1"
 EXCLUDE_FROM_SHLIBS = "1"
 
@@ -131,7 +131,7 @@ addtask deploy before do_package after do_install
 
 do_install[fakeroot] = "1"
 
-fakeroot do_install_append() {
+fakeroot do_install:append() {
 	if [ -n "${D}" ]; then
 		install -d ${D}
 		if [ -f ${B}/${DOCKERHUB_IMAGE}-${DOCKERHUB_TAG}.tar ]; then
@@ -144,7 +144,7 @@ fakeroot do_install_append() {
 	fi
 }
 
-FILES_${PN} = "/bin /etc /lib /mnt /run /sys /usr /boot /dev /home /media /opt /root /sbin /tmp /var /srv"
-FILES_${PN}-staticdev = ""
-FILES_${PN}-dev = ""
+FILES:${PN} = "/bin /etc /lib /mnt /run /sys /usr /boot /dev /home /media /opt /root /sbin /tmp /var /srv"
+FILES:${PN}-staticdev = ""
+FILES:${PN}-dev = ""
 

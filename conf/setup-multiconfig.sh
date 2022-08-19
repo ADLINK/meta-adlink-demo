@@ -19,7 +19,7 @@ EOF
   if [ -f ${BUILDDIR}/conf/multiconfig/${TARGET}.conf ]; then
 	if [ "${MACHINE}" = "arm-container" ]; then
 		echo "DISTRO = \"poky\"" >> ${BUILDDIR}/conf/multiconfig/${TARGET}.conf
-		echo "DISTRO_FEATURES_append = \" virtualization\"" >> ${BUILDDIR}/conf/multiconfig/${TARGET}.conf
+		echo "DISTRO_FEATURES:append = \" virtualization\"" >> ${BUILDDIR}/conf/multiconfig/${TARGET}.conf
 		echo "IMAGE_COMPRESS_TYPE ?= \"tar.gz\"" >> ${BUILDDIR}/conf/multiconfig/${TARGET}.conf
 	fi
   fi

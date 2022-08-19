@@ -30,7 +30,7 @@ do_package_qa() {
 do_populate_packages() {
 }
 
-FILES_${PN} += "${D}/usr/share/applications/"
+FILES:${PN} += "${D}/usr/share/applications/"
 
-#INSANE_SKIP_${PN} = "already-stripped dev-so"
-#INSANE_SKIP_${PN} = "already-stripped"
+#INSANE_SKIP:${PN} = "already-stripped dev-so"
+#INSANE_SKIP:${PN} = "already-stripped"

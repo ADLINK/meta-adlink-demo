@@ -48,12 +48,12 @@ CORE_IMAGE_EXTRA_INSTALL += " \
     ${@bb.utils.contains('MACHINE_FEATURES', 'wifi', 'wpa-supplicant', '', d)} \
 "
 
-CORE_IMAGE_EXTRA_INSTALL_append_raspberrypi3-64 = " raspi-gpio rpi-gpio ipxe-bin dnsmasq python3-pyudev docker-build-lava-dispatcher docker-compose-service"
+CORE_IMAGE_EXTRA_INSTALL:append:raspberrypi3-64 = " raspi-gpio rpi-gpio ipxe-bin dnsmasq python3-pyudev docker-build-lava-dispatcher docker-compose-service"
 
 # raw image setting
 IMAGE_ROOTFS_SIZE ?= "8192"
 IMAGE_ROOTFS_EXTRA_SPACE = "4096"
-IMAGE_ROOTFS_EXTRA_SPACE_append = "${@bb.utils.contains('DISTRO_FEATURES', 'systemd', ' + 4096', '', d)}"
+IMAGE_ROOTFS_EXTRA_SPACE:append = "${@bb.utils.contains('DISTRO_FEATURES', 'systemd', ' + 4096', '', d)}"
 
 # adlink-image-docker-os WIC template required configurations
 WKS_FILE ?= "image-rootfs-data.wks.in"
@@ -76,10 +76,10 @@ inherit core-image extrausers
 # NOTE: no need to include docker-datapart in IMAGE_INSTALL because
 # docker-datapart only produce the extracted data partition for docker engine
 # the data partition is flashed by WIC (with datafs.py modification)
-DEPENDS_append = " docker-datapart"
+DEPENDS:append = " docker-datapart"
 MOUNT_PREFIX = ""
 
-IMAGE_CMD_dataimg_prepend () {
+IMAGE_CMD_dataimg:prepend () {
   if [ -f ${DEPLOY_DIR_IMAGE}/${TARGET_DOCKER_PARTITION_IMAGE}.${IMAGE_COMPRESS_TYPE} ]; then
     mkdir -p ${IMAGE_ROOTFS}${MOUNT_PREFIX}${DOCKER_PARTITION_MOUNT_PATH}
     bbwarn "Extract ${TARGET_DOCKER_PARTITION_IMAGE}.${IMAGE_COMPRESS_TYPE} to ${IMAGE_ROOTFS}${MOUNT_PREFIX}${DOCKER_PARTITION_MOUNT_PATH}, please ensure docker.service start with --data-root set to ${MOUNT_PREFIX}${DOCKER_PARTITION_MOUNT_PATH} directory"
