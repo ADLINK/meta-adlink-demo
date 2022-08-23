@@ -20,6 +20,7 @@ PACKAGES = "packagegroup-adlink \
             packagegroup-adlink-debug \
             packagegroup-adlink-ci \
             packagegroup-adlink-net \
+            packagegroup-adlink-bios \
 "
 
 #
@@ -34,6 +35,7 @@ RDEPENDS:packagegroup-adlink = " \
     ${@bb.utils.contains('DISTRO_FEATURES', 'utils', 'packagegroup-adlink-utils', '', d)} \
     ${@bb.utils.contains('DISTRO_FEATURES', 'debug', 'packagegroup-adlink-debug', '', d)} \
     ${@bb.utils.contains('DISTRO_FEATURES', 'ci', 'packagegroup-adlink-ci', '', d)} \
+    ${@bb.utils.contains('DISTRO_FEATURES', 'bios', 'packagegroup-adlink-bios', '', d)} \
 "
 
 #
@@ -184,5 +186,15 @@ RDEPENDS:packagegroup-adlink-debug = " \
     strace \
     tcpdump \
     phytool \
+"
+
+#
+# packages added by adlink bios support
+#
+SUMMARY:packagegroup-adlink-bios = "Adlink BIOS Support"
+RDEPENDS:packagegroup-adlink-bios = " \
+    flashrom \
+    afulnx \
+    scelnx \
 "
 
