@@ -96,7 +96,6 @@ PKG_TPM := "${@'packagegroup-security-tpm2' if 'meta-tpm' in d.getVar('BBLAYERS'
 PKG_SEMA := "${@'sema' if 'meta-adlink-sema' in d.getVar('BBLAYERS') else ''}"
 SUMMARY:packagegroup-adlink-tools = "Adlink Tools Support"
 RDEPENDS:packagegroup-adlink-tools = " \
-    adlink-startup \
     mraa \
     mraa-dev \
     mraa-doc \
@@ -186,6 +185,7 @@ RDEPENDS:packagegroup-adlink-debug = " \
     strace \
     tcpdump \
     phytool \
+    binutils \
 "
 
 #
