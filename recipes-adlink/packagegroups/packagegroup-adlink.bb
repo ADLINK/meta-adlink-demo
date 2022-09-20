@@ -118,6 +118,7 @@ RDEPENDS:packagegroup-adlink-utils = " \
     coreutils \
     cmake \
     curl \
+    dmidecode \
     dtc \
     e2fsprogs-mke2fs \
     e2fsprogs-resize2fs \
@@ -143,6 +144,7 @@ RDEPENDS:packagegroup-adlink-utils = " \
     python3 \
     spitools \
     v4l-utils \
+    usbutils \
     wget \
     ${@bb.utils.contains('PACKAGE_CLASSES', 'package_rpm', 'dnf', '', d)} \
     ${@bb.utils.contains('IMAGE_FEATURES', 'ssh-server-openssh', 'packagegroup-core-ssh-openssh openssh openssh-sftp-server', '', d)} \
