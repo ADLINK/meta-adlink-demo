@@ -66,8 +66,10 @@ WIC_DATA_PARTITION_LABEL ?= "docker"
 WIC_PARTITION_SIZE ?= "8196"
 WIC_PARTITION_TABLE_TYPE ?= "msdos"
 
+# clear password deprecated
+# use 'mkpasswd -m sha-512 adlink -s 00000000'
 EXTRA_USERS_PARAMS = " \
-useradd -P adlink adlink; \
+useradd -p '$6$00000000$/noRU5LR3VQ5X2EyOdcXvqd9bNRwM/PCAMxY8cvKXsjSqxezozESCRWuVphSrjGhvUjD4H9RmVBX4tcQHEQiH0' adlink; \
 usermod -a -G sudo,users,plugdev,docker adlink; \
 "
 
