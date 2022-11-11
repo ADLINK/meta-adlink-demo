@@ -78,8 +78,8 @@ do_compile () {
 
 	bbnote "Remove existing docker image..."
 	# docker-compose build the docker image
-	if $DOCKER images | grep -q ${DOCKER_IMAGE_PREFIX}${DOCKER_COMPOSE_IMAGE}; then
-		$DOCKER rmi ${DOCKER_IMAGE_PREFIX}/${DOCKER_COMPOSE_IMAGE}
+	if $DOCKER images | grep -q -P "(^|\s)\K${DOCKER_IMAGE_PREFIX}${DOCKER_COMPOSE_IMAGE}(?=\s|$)"; then
+		$DOCKER rmi ${DOCKER_IMAGE_PREFIX}${DOCKER_COMPOSE_IMAGE}
 	fi
 
 	bbnote "Starting building docker image..."

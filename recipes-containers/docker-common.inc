@@ -1,19 +1,24 @@
 DOCKERHUB_CHECK_CONN_URL ?= "index.docker.io"
+DOCKERHUB_ALIVE ?= "no"
 
 # Check if host can reach a specific URL
 # Used for connectivity check
 def connected(d):
     import socket
 
-    REMOTE_SERVER = d.getVar('DOCKERHUB_CHECK_CONN_URL', True)
-    try:
-        host = socket.gethostbyname(REMOTE_SERVER)
-        testSocket = socket.create_connection((host, 80), 2)
-        testSocket.close()
+    if d.getVar('DOCKERHUB_ALIVE', True) == "no":
+        REMOTE_SERVER = d.getVar('DOCKERHUB_CHECK_CONN_URL', True)
+        try:
+            host = socket.gethostbyname(REMOTE_SERVER)
+            testSocket = socket.create_connection((host, 443))
+            testSocket.close()
+            d.setVar('DOCKERHUB_ALIVE', 'yes')
+            return "yes"
+        except OSError as err:
+            bb.warn("Connection to %s:443 exception: %s" % (REMOTE_SERVER, err))
+            return "no"
+    else:
         return "yes"
-    except:
-        pass
-    return "no"
 
 # Check if docker is running and usable for current user
 def usable_docker(d):
