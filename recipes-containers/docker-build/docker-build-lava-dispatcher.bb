@@ -33,18 +33,20 @@ python reconfigure_lava_dispatcher() {
     default = None
     srcdir = d.getVar("S")
     tgtplatform = d.getVar("TARGET_PLATFORM")
+    tgtimage =  d.getVar("DOCKER_COMPOSE_IMAGE")
     if tgtplatform in ('linux/arm64', 'linux/amd64'):
       with open("%s/ci-box-conf.yaml" % srcdir, "r+") as fd:
         import yaml
         ciboxconf = yaml.safe_load(fd)
         for slave in ciboxconf["slaves"]:
-          if "rpi3" in slave['name'] or len(ciboxconf["slaves"]) == 1:
+          # clear all default slave from ci-box-conf.yaml file
+          if "default_slave" in slave:
+            slave['default_slave'] = False
+          # set defaul slave if DOCKER_COMPOSE_IMAGE match slave name or if only one slave
+          if tgtimage == slave['name'] or len(ciboxconf["slaves"]) == 1:
             slave['arch'] = tgtplatform
             slave['default_slave'] = True
-            default = slave['name']
-          else:
-            if 'default_slave' in slave and slave['default_slave'] and default is not None:
-              slave['default_slave'] = False
+        # dump back out to ci-box-conf.yaml
         fd.seek(0)
         fd.truncate()
         yaml.safe_dump(ciboxconf, fd, default_flow_style=False)
