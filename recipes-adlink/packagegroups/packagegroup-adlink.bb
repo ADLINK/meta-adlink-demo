@@ -193,10 +193,11 @@ RDEPENDS:packagegroup-adlink-debug = " \
 #
 # packages added by adlink bios support
 #
+AMI_TOOLS = ""
+AMI_TOOLS:intel-corei7-64 = "afulnx scelnx"
 SUMMARY:packagegroup-adlink-bios = "Adlink BIOS Support"
 RDEPENDS:packagegroup-adlink-bios = " \
     flashrom \
-    afulnx \
-    scelnx \
+    ${AMI_TOOLS} \
 "
 
