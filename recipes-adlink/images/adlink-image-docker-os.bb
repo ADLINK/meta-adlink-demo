@@ -17,6 +17,7 @@ IMAGE_INSTALL = "\
 	${CORE_IMAGE_BASE_INSTALL} \
 	docker-ce \
 	python3-docker-compose \
+    python3-distutils \
 	openflow \
 	kernel-modules \
 	git \
@@ -46,9 +47,10 @@ CORE_IMAGE_EXTRA_INSTALL += " \
     ${@bb.utils.contains('DISTRO_FEATURES', 'wayland', 'weston-init', '', d)} \
     ${@bb.utils.contains('DISTRO_FEATURES', 'x11 wayland', 'weston-xwayland xterm', '', d)} \
     ${@bb.utils.contains('MACHINE_FEATURES', 'wifi', 'wpa-supplicant', '', d)} \
+    ipxe-bin dnsmasq python3-pyudev docker-build-lava-dispatcher docker-compose-service \
 "
 
-CORE_IMAGE_EXTRA_INSTALL:append:raspberrypi3-64 = " raspi-gpio rpi-gpio ipxe-bin dnsmasq python3-pyudev docker-build-lava-dispatcher docker-compose-service"
+CORE_IMAGE_EXTRA_INSTALL:append:raspberrypi3-64 = " raspi-gpio rpi-gpio"
 
 # raw image setting
 IMAGE_ROOTFS_SIZE ?= "8192"
@@ -56,8 +58,11 @@ IMAGE_ROOTFS_EXTRA_SPACE = "4096"
 IMAGE_ROOTFS_EXTRA_SPACE:append = "${@bb.utils.contains('DISTRO_FEATURES', 'systemd', ' + 4096', '', d)}"
 
 # adlink-image-docker-os WIC template required configurations
+WIC_IMAGE_BOOT_LOADER = "${@bb.utils.contains_any("EFI_PROVIDER", "systemd-boot", "systemd-boot", "grub-efi", d)}"
 WKS_FILE ?= "image-rootfs-data.wks.in"
-WKS_FILE_raspberrypi3 = "sdimage-rootfs-data.wks.in"
+WKS_FILE:raspberrypi3 = "sdimage-rootfs-data.wks.in"
+WKS_FILE:raspberrypi3-64 = "sdimage-rootfs-data.wks.in"
+WKS_FILE:intel-corei7-64 = "efi-bootdisk-microcode-data.wks.in"
 WIC_FSTAB_BLKDEV ?= "mmcblk0"
 IMAGE_ROOTFS_ALIGNMENT ?= "4096"
 WIC_DATA_PARTITION_MOUNT_PATH ?= "/var/lib/docker"
@@ -90,10 +95,9 @@ IMAGE_CMD_dataimg:prepend () {
 }
 
 
-ROOTFS_POSTPROCESS_COMMAND += " rpi_ipv4forward_sysctl_config ; "
+ROOTFS_POSTPROCESS_COMMAND += " ipv4forward_sysctl_config ; "
 
-rpi_ipv4forward_sysctl_config() {
-  if ${@bb.utils.contains_any('MACHINE', 'raspberrypi3-64 raspberrypi3', 'true', 'false', d)} ; then
+ipv4forward_sysctl_config() {
     # systemd sysctl config
     test -d ${IMAGE_ROOTFS}${sysconfdir}/sysctl.d && \
         echo "net.ipv4.ip_forward = 1" > ${IMAGE_ROOTFS}${sysconfdir}/sysctl.d/rpi-ipv4-forward.conf
@@ -106,5 +110,4 @@ rpi_ipv4forward_sysctl_config() {
 
     # ensure user adlink is enabled in /etc/sudoers.d/0001_adlink
     echo "adlink ALL=(ALL) ALL" > ${IMAGE_ROOTFS}${sysconfdir}/sudoers.d/0001_adlink
-  fi
 }
