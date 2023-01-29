@@ -45,7 +45,7 @@ python reconfigure_lava_dispatcher() {
     default = None
     srcdir = d.getVar("S")
     tgtplatform = d.getVar("TARGET_PLATFORM")
-    tgtimages =  d.getVar("DOCKER_COMPOSE_IMAGES")
+    tgtimages = d.getVar("DOCKER_COMPOSE_IMAGES")
     if tgtplatform in ('linux/arm64', 'linux/amd64'):
       with open("%s/ci-box-conf.yaml" % srcdir, "r+") as fd:
         import yaml
@@ -59,11 +59,17 @@ python reconfigure_lava_dispatcher() {
             if tgtimage == slave['name'] or len(ciboxconf["slaves"]) == 1:
               slave['arch'] = tgtplatform
               slave['default_slave'] = True
+              default = slave['version']
               break
         # dump back out to ci-box-conf.yaml
         fd.seek(0)
         fd.truncate()
         yaml.safe_dump(ciboxconf, fd, default_flow_style=False)
+      with open("%s/configfile" % srcdir, "w") as envfd:
+        envfd.seek(0)
+        envfd.truncate()
+        envfd.write("tgtplatform=%s/v8\n" % tgtplatform)
+        envfd.write("version=%s\n" % default)
     else:
       bb.warn("TARGET_PLATFORM: %s not recognized" % tgtplatform)
 }
@@ -74,7 +80,7 @@ do_configure:prepend () {
 	./ci-box-gen.sh slaves
 }
 
-DOCKER_BASE_IMAGES ?= "lavasoftware/lava-dispatcher:2022.10 alpine:latest"
+DOCKER_BASE_IMAGES ?= "lavasoftware/lava-dispatcher:2025.04 alpine:latest"
 do_clear_base () {
 	# We force the PATH to be the standard linux path in order to use the host's
 	# docker daemon instead of the result of docker-native. This avoids version mismatches
@@ -87,7 +93,29 @@ do_clear_base () {
 		fi
 	done
 }
-addtask clear_base before do_compile after do_configuration
+addtask clear_base before do_configure after do_ipxe_fetch
+
+do_configure[postfuncs] += "pull_lava_dispatcher"
+
+pull_lava_dispatcher () {
+	# At this point we need Internet connectivity for pulling lava-dispatcher
+	DOCKER=$(PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" which docker)
+	if [ -f ${S}/configfile ]; then
+		for tgtimage in ${DOCKER_BASE_IMAGES}; do
+			case ${tgtimage} in
+			*lava-dispatcher*)
+				SLAVE_PLATFORM=$(cat ${S}/configfile | grep tgtplatform | cut -d'=' -f2)
+				SLAVE_VERSION=$(cat ${S}/configfile | grep version | cut -d'=' -f2)
+				${DOCKER} pull --platform ${SLAVE_PLATFORM} lavasoftware/lava-dispatcher:${SLAVE_VERSION}
+				;;
+			*)
+				SLAVE_PLATFORM=$(cat ${S}/configfile | grep tgtplatform | cut -d'=' -f2)
+				${DOCKER} pull --platform ${SLAVE_PLATFORM} ${tgtimage}
+				;;
+			esac
+		done
+	fi
+}
 
 do_install:append () {
 	# copy the ci-box-lava-worker/ to /home/adlink/ci-box-lava-worker
