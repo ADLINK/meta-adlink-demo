@@ -47,7 +47,7 @@ require ../docker-common.inc
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
 DOCKER_IMAGE_PREFIX ?= "adlink/"
-DOCKER_COMPOSE_IMAGE ?= ""
+DOCKER_COMPOSE_IMAGES ?= ""
 
 # NOTE: Host Build Environment must provide docker and docker-compose commands
 
@@ -78,29 +78,35 @@ do_compile () {
 
 	bbnote "Remove existing docker image..."
 	# docker-compose build the docker image
-	if $DOCKER images | grep -q -P "(^|\s)\K${DOCKER_IMAGE_PREFIX}${DOCKER_COMPOSE_IMAGE}(?=\s|$)"; then
-		$DOCKER rmi ${DOCKER_IMAGE_PREFIX}${DOCKER_COMPOSE_IMAGE}
-	fi
+	for dimg in "${DOCKER_COMPOSE_IMAGES}"; do
+		if $DOCKER images | grep -q -P "(^|\s)\K${DOCKER_IMAGE_PREFIX}${dimg}(?=\s|$)"; then
+			$DOCKER rmi ${DOCKER_IMAGE_PREFIX}${dimg}
+		fi
+	done
 
 	bbnote "Starting building docker image..."
 	# docker-compose build the docker image
-	if [ -z "${DOCKER_COMPOSE_IMAGE}" ]; then
-		${DOCKERCOMPOSE} -f ${S}/docker-compose.yml buid
+	if [ -z "${DOCKER_COMPOSE_IMAGES}" ]; then
+		${DOCKERCOMPOSE} -f ${S}/docker-compose.yml build
 	else
-		${DOCKERCOMPOSE} -f ${S}/docker-compose.yml build ${DOCKER_COMPOSE_IMAGE}
+		for dimg in "${DOCKER_COMPOSE_IMAGES}"; do
+			${DOCKERCOMPOSE} -f ${S}/docker-compose.yml build ${dimg}
+		done
 	fi
 
 	bbnote "Saving built docker image..."
 	# Export the Docker Image
-	if $DOCKER images | grep ${DOCKER_COMPOSE_IMAGE} ; then
-		if which ${COMPRESSCMD} ; then
-			$DOCKER image save "${DOCKER_IMAGE_PREFIX}${DOCKER_COMPOSE_IMAGE}" | ${COMPRESSCMD} > ${B}/${DOCKER_COMPOSE_IMAGE}.${IMAGE_COMPRESS_TYPE}
+	for dimg in ${DOCKER_COMPOSE_IMAGES}; do
+		if $DOCKER images | grep ${dimg} ; then
+			if which ${COMPRESSCMD} ; then
+				$DOCKER image save "${DOCKER_IMAGE_PREFIX}${dimg}" | ${COMPRESSCMD} > ${B}/${dimg}.${IMAGE_COMPRESS_TYPE}
+			else
+				$DOCKER image save "${DOCKER_IMAGE_PREFIX}${dimg}" -o ${B}/${dimg}.tar
+			fi
 		else
-			$DOCKER image save "${DOCKER_IMAGE_PREFIX}${DOCKER_COMPOSE_IMAGE}" -o ${B}/${DOCKER_COMPOSE_IMAGE}.tar
+			bbfatal "Can't find built docker image."
 		fi
-	else
-		bbfatal "Can't find built docker image."
-	fi
+	done
 }
 
-FILES:${PN} += "${DOCKER_COMPOSE_IMAGE}.tar"
+FILES:${PN} += "*.tar"
