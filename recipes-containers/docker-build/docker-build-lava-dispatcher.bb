@@ -4,10 +4,10 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda
 
 PR = "r0"
 SRCSERVER = "gitsm://github.com/po-cheng-adlink/lava-lab.git"
-SRCBRANCH = "ci-box-2022.03"
+SRCBRANCH = "ci-box-valiguard"
 SRCOPTIONS = ";protocol=https"
 SRCOPTIONS:append:private = ";user=${PRIVATE_USER}:${PRIVATE_TOKEN}"
-SRCREV = "6a6a12812d7677d8fda1e9d6bfe226aecf56c3a3"
+SRCREV = "24b40e87df83f2443757bc55ce7255a09399a352"
 SRC_URI = "${SRCSERVER};branch=${SRCBRANCH}${SRCOPTIONS}"
 
 S = "${WORKDIR}/git"
@@ -88,6 +88,10 @@ do_install:append () {
 	install -d ${D}${sysconfdir}/systemd/system/multi-user.target.wants/
 	install -m 0644 ${S}/udev-forward.service ${D}${systemd_unitdir}/system/udev-forward.service
 	ln -sf ${systemd_unitdir}/system/udev-forward.service ${D}${sysconfdir}/systemd/system/multi-user.target.wants/udev-forward.service
+	# copy generated avahi_services.sh
+	if [ -f ${S}/avahi_services.sh ]; then
+		install -m 0777 ${S}/avahi_services.sh ${D}/home/adlink/
+	fi
 }
 
 inherit deploy
