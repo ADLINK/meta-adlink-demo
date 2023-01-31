@@ -12,7 +12,7 @@ enable-tftp\n\
 tftp-root=/tftproot\n\
 "
 
-ALTERNATIVE_DNSMASQ_CONFIG_raspberrypi3-64 = "\
+ALTERNATIVE_DNSMASQ_CONFIG:raspberrypi3-64 = "\
 interface=eth0\n\
 expand-hosts\n\
 filterwin2k\n\
