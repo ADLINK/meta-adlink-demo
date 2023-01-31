@@ -6,9 +6,8 @@ After=docker.service
 [Service]
 Type=oneshot
 WorkingDirectory=/etc/
-ExecStart=/usr/bin/env /usr/bin/docker-compose -f @DOCKER_COMPOSE_FILE@ up -d
-ExecStop=/usr/bin/env /usr/bin/docker-compose -f @DOCKER_COMPOSE_FILE@ stop
-StandardOutput=syslog
+ExecStart=/usr/bin/env /usr/bin/docker-compose -f @DOCKER_COMPOSE_FILE@ up -d @DOCKER_RUN_IMAGES@
+ExecStop=/usr/bin/env /usr/bin/docker-compose -f @DOCKER_COMPOSE_FILE@ stop @DOCKER_RUN_IMAGES@
 RemainAfterExit=yes
 PermissionsStartOnly=true
 ExecStartPre=-/bin/sh -c '/home/adlink/udev_reload.sh'
