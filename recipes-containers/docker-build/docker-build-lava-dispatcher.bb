@@ -72,6 +72,8 @@ do_install:append () {
 	cp -rf ${S}/udev ${D}/home/adlink/
 	sed -i 's|/home/jenkins.*/udev-forward|${systemd_unitdir}/system/udev-forward|g' ${S}/udev-forward.sh
 	install -m 0755 ${S}/udev-forward.sh ${D}/home/adlink/
+	sed -i 's|/home/jenkins.*/udev-serial|${systemd_unitdir}/system/udev-serial|g' ${S}/udev-serial.sh
+	install -m 0755 ${S}/udev-serial.sh ${D}/home/adlink/
 	install -m 0755 ${S}/udev_reload.sh ${D}/home/adlink/
 	# copy docker-comppose.yml for docker-compose-service
 	if [ -f ${S}/docker-compose.yml ]; then
@@ -84,10 +86,13 @@ do_install:append () {
 	cp -rf ${S}/docker-udev-tools ${D}/home/adlink/
 	sed -i 's|After=multi-user.target|After=multi-user.target docker-compose.service|g' ${S}/udev-forward.service
 	sed -i 's|/home/jenkins/.*udev-forward|/home/adlink/docker-udev-tools/udev-forward|g' ${S}/udev-forward.service
+	sed -i 's|/home/jenkins/.*udev-serial|/home/adlink/docker-udev-tools/udev-serial|g' ${S}/udev-serial.service
 	install -d ${D}${systemd_unitdir}/system/
 	install -d ${D}${sysconfdir}/systemd/system/multi-user.target.wants/
 	install -m 0644 ${S}/udev-forward.service ${D}${systemd_unitdir}/system/udev-forward.service
 	ln -sf ${systemd_unitdir}/system/udev-forward.service ${D}${sysconfdir}/systemd/system/multi-user.target.wants/udev-forward.service
+	install -m 0644 ${S}/udev-serial.service ${D}${systemd_unitdir}/system/udev-serial.service
+	ln -sf ${systemd_unitdir}/system/udev-serial.service ${D}${sysconfdir}/systemd/system/multi-user.target.wants/udev-serial.service
 	# copy generated avahi_services.sh
 	if [ -f ${S}/avahi_services.sh ]; then
 		install -m 0777 ${S}/avahi_services.sh ${D}/home/adlink/
@@ -116,7 +121,7 @@ do_deploy () {
 }
 addtask deploy before do_package after do_compile
 
-RDEPENDS:${PN} += "python3-pyudev"
+RDEPENDS:${PN} += "python3-pyudev python3-pyserial python3-flask python3-psutil"
 
 FILES:${PN} += "/home/adlink/ ${sysconfdir}/systemd/system/multi-user.target.wants/ ${systemd_unitdir}/system/"
 
