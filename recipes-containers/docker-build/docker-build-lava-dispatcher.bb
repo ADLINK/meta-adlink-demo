@@ -62,6 +62,21 @@ do_configure:prepend () {
 	./ci-box-gen.sh slaves
 }
 
+DOCKER_BASE_IMAGES ?= "lavasoftware/lava-dispatcher:2022.10 alpine:latest"
+do_clear_base () {
+	# We force the PATH to be the standard linux path in order to use the host's
+	# docker daemon instead of the result of docker-native. This avoids version mismatches
+	DOCKER=$(PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" which docker)
+
+	bbnote "Remove existing base images..."
+	for dimg in ${DOCKER_BASE_IMAGES}; do
+		if $DOCKER images --format '{{.Repository}}:{{.Tag}}' | grep -q "${dimg}"; then
+			$DOCKER rmi ${dimg}
+		fi
+	done
+}
+addtask clear_base before do_compile after do_configuration
+
 do_install:append () {
 	# copy the ci-box-lava-worker/ to /home/adlink/ci-box-lava-worker
 	install -d ${D}/home/adlink/
