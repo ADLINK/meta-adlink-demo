@@ -20,6 +20,18 @@ do_install() {
     else
         bbwarn "No intel.efi found in ${DEPLOY_DIR}/share, ipxe binary not packaged!"
     fi
+    if [ -f ${DEPLOY_DIR}/share/snp.efi ]; then
+        bbnote "Copy snp.efi to /tftproot"
+        install -m 0644 ${DEPLOY_DIR}/share/snp.efi ${D}/tftproot
+    else
+        bbwarn "No snp.efi found in ${DEPLOY_DIR}/share, ipxe binary not packaged!"
+    fi
+    if [ -f ${DEPLOY_DIR}/share/snponly.efi ]; then
+        bbnote "Copy snponly.efi to /tftproot"
+        install -m 0644 ${DEPLOY_DIR}/share/snponly.efi ${D}/tftproot
+    else
+        bbwarn "No snponly.efi found in ${DEPLOY_DIR}/share, ipxe binary not packaged!"
+    fi
 }
 
 FILES:${PN} = "/tftproot/*"
