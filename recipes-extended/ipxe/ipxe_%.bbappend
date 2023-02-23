@@ -15,7 +15,7 @@ addtask post_patch after do_patch before do_configure
 
 IPXE_PLATFORM = '${@bb.utils.contains("BBMULTICONFIG", "genericx86", "bin-i386-efi/", \
 bb.utils.contains("BBMULTICONFIG", "genericx86-64", "bin-x86_64-efi/", "", d), d)}'
-EXTRA_OEMAKE:append = " ${IPXE_PLATFORM}intel.efi"
+EXTRA_OEMAKE:append = " ${IPXE_PLATFORM}intel.efi ${IPXE_PLATFORM}snp.efi ${IPXE_PLATFORM}snponly.efi"
 
 do_install() {
     install -d ${D}/tftproot

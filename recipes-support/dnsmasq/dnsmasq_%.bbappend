@@ -6,7 +6,7 @@ domain-needed\n\
 dhcp-range=192.168.10.10,192.168.10.30,12h\n\
 dhcp-userclass=set:ipxe,iPXE\n\
 dhcp-boot=tag:!ipxe,intel.efi\n\
-dhcp-boot=tag:ipxe,boot64.efi\n\
+dhcp-boot=tag:ipxe,bootx64.efi\n\
 dhcp-lease-max=20\n\
 enable-tftp\n\
 tftp-root=/tftproot\n\
@@ -19,8 +19,8 @@ filterwin2k\n\
 domain-needed\n\
 dhcp-range=192.168.10.10,192.168.10.30,12h\n\
 dhcp-userclass=set:ipxe,iPXE\n\
-dhcp-boot=tag:!ipxe,intel.efi\n\
-dhcp-boot=tag:ipxe,boot64.efi\n\
+dhcp-boot=tag:!ipxe,snponly.efi\n\
+dhcp-boot=tag:ipxe,bootx64.efi\n\
 dhcp-lease-max=20\n\
 "
 

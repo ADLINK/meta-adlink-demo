@@ -25,6 +25,18 @@ do_ipxe_fetch () {
     else
         bbwarn "No intel.efi found in ${DEPLOY_DIR}/share, ipxe binary not copied to lava-dispatcher!"
     fi
+    if [ -f ${DEPLOY_DIR}/share/snp.efi ]; then
+        bbnote "Copy snp.efi to ci-box-lava-worker/configs/"
+        install -m 0644 ${DEPLOY_DIR}/share/snp.efi ${S}/ci-box-lava-worker/configs/
+    else
+        bbwarn "No snp.efi found in ${DEPLOY_DIR}/share, ipxe binary not copied to lava-dispatcher!"
+    fi
+    if [ -f ${DEPLOY_DIR}/share/snponly.efi ]; then
+        bbnote "Copy snponly.efi to ci-box-lava-worker/configs/"
+        install -m 0644 ${DEPLOY_DIR}/share/snponly.efi ${S}/ci-box-lava-worker/configs/
+    else
+        bbwarn "No snponly.efi found in ${DEPLOY_DIR}/share, ipxe binary not copied to lava-dispatcher!"
+    fi
 }
 addtask ipxe_fetch before do_configure after do_unpack
 
