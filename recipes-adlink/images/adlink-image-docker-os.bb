@@ -46,7 +46,7 @@ CORE_IMAGE_EXTRA_INSTALL += " \
     ${@bb.utils.contains('DISTRO_FEATURES', 'x11 wayland', 'weston-xwayland xterm', '', d)} \
     ${@bb.utils.contains('MACHINE_FEATURES', 'wifi', 'wpa-supplicant iw', '', d)} \
     ipxe-bin dnsmasq python3-pyudev python3-pyserial python3-flask python3-psutil \
-    docker-build-lava-dispatcher docker-compose-service docker-discovery-service \
+    docker-build-lava-dispatcher docker-startup-service docker-discovery-service \
 "
 
 CORE_IMAGE_EXTRA_INSTALL:append:raspberrypi3-64 = " raspi-gpio rpi-gpio"
