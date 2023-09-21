@@ -28,6 +28,7 @@ PACKAGES = "packagegroup-adlink \
 #
 RDEPENDS:packagegroup-adlink = " \
     packagegroup-adlink-tools \
+    packagegroup-adlink-net \
     ${@bb.utils.contains('DISTRO_FEATURES', 'sensors', 'packagegroup-adlink-sensors', '', d)} \
     ${@bb.utils.contains('DISTRO_FEATURES', 'benchmarks', 'packagegroup-adlink-benchmarks', '', d)} \
     ${@bb.utils.contains('MACHINE_FEATURES', 'wifi', 'packagegroup-adlink-wifi', '', d)} \
