@@ -118,11 +118,13 @@ RDEPENDS:packagegroup-adlink-utils = " \
     pbzip2 \
     coreutils \
     cmake \
+    cpufrequtils \
     curl \
     dmidecode \
     dtc \
     e2fsprogs-mke2fs \
     e2fsprogs-resize2fs \
+    edid-decode \
     evtest \
     fbset \
     fb-test \
@@ -138,6 +140,7 @@ RDEPENDS:packagegroup-adlink-utils = " \
     libstdc++ \
     libgpiod \
     make \
+    mbw \
     minicom \
     mmc-utils \
     parted \
@@ -167,6 +170,8 @@ RDEPENDS:packagegroup-adlink-net = " \
     bridge-utils \
     net-tools \
     ethtool \
+    mdio-tools \
+    mdio-netlink \
 "
 
 #
