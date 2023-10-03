@@ -17,7 +17,6 @@ IMAGE_INSTALL = "\
 	${CORE_IMAGE_BASE_INSTALL} \
 	packagegroup-adlink \
 	kernel-modules \
-	python3-docker-compose \
 	openflow \
 	jq \
 	sudo \
@@ -25,10 +24,16 @@ IMAGE_INSTALL = "\
 
 # Select Image Features
 IMAGE_FEATURES += " \
+    debug-tweaks \
+    tools-profile \
+    tools-sdk \
+    tools-debug \
+    tools-testapps \
+    package-management \
     splash \
     hwcodecs \
     ssh-server-openssh \
-    ${@bb.utils.contains('DISTRO_FEATURES', 'wayland', '', bb.utils.contains('DISTRO_FEATURES', 'x11', 'x11-base x11-sato', '', d), d)} \
+    ${@bb.utils.contains('DISTRO_FEATURES', 'wayland', 'weston', bb.utils.contains('DISTRO_FEATURES', 'x11', 'x11-base x11-sato', '', d), d)} \
 "
 
 IMAGE_LINGUAS = " "
