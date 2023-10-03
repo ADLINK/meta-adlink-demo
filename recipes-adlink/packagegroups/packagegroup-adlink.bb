@@ -11,6 +11,7 @@ PACKAGE_ARCH = "${MACHINE_ARCH}"
 inherit packagegroup
 
 PACKAGES = "packagegroup-adlink \
+            packagegroup-adlink-imx \
             packagegroup-adlink-sensors \
             packagegroup-adlink-benchmarks \
             packagegroup-adlink-wifi \
@@ -37,6 +38,28 @@ RDEPENDS:packagegroup-adlink = " \
     ${@bb.utils.contains('DISTRO_FEATURES', 'debug', 'packagegroup-adlink-debug', '', d)} \
     ${@bb.utils.contains('DISTRO_FEATURES', 'ci', 'packagegroup-adlink-ci', '', d)} \
     ${@bb.utils.contains('DISTRO_FEATURES', 'bios', 'packagegroup-adlink-bios', '', d)} \
+    ${@bb.utils.contains('IMAGE_FEATURES', 'debug-tweaks', 'packagegroup-adlink-imx', '', d)} \
+"
+
+#
+# packages added by imx-image-core for tests
+#
+SUMMARY:packagegroup-adlink-imx = "Imx Tools Support"
+RDEPENDS:packagegroup-adlink-imx = " \
+    imx-test \
+    firmwared \
+    packagegroup-core-full-cmdline \
+    packagegroup-tools-bluetooth \
+    packagegroup-fsl-tools-audio \
+    packagegroup-fsl-tools-gpu \
+    packagegroup-fsl-tools-gpu-external \
+    packagegroup-fsl-tools-testapps \
+    packagegroup-fsl-tools-benchmark \
+    packagegroup-fsl-gstreamer1.0 \
+    packagegroup-fsl-gstreamer1.0-full \
+    packagegroup-imx-core-tools \
+    packagegroup-imx-isp \
+    packagegroup-imx-security \
 "
 
 #
