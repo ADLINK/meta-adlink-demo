@@ -1,0 +1,2 @@
+./mdio-tool w eth1 0x1F 0x0000
+./mdio-tool w eth1 0x09 0x8000
