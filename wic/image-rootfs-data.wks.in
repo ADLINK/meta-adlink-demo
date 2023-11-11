@@ -22,6 +22,6 @@
 part u-boot --source rawcopy --sourceparams="file=${WIC_BOOTLOADER_IMAGE}" --ondisk ${WIC_FSTAB_BLKDEV} --no-table --align ${WIC_BOOTLOADER_OFFSET}
 part /boot --source bootimg-partition --ondisk ${WIC_FSTAB_BLKDEV} --fstype=vfat --label boot --active --align ${IMAGE_ROOTFS_ALIGNMENT} --size 32
 part / --source rootfs --ondisk ${WIC_FSTAB_BLKDEV} --fstype=ext4 --label root --align ${IMAGE_ROOTFS_ALIGNMENT}
-part ${WIC_DATA_PARTITION_MOUNT_PATH} --source datafs --sourceparams="file=${WIC_DATA_PARTITION_IMAGE}" --ondisk ${WIC_FSTAB_BLKDEV} --fstype=ext4 --fsoptions "defaults" --label ${WIC_DATA_PARTITION_LABEL} --align ${IMAGE_ROOTFS_ALIGNMENT} --size ${WIC_PARTITION_SIZE}
+part ${WIC_DATA_PARTITION_MOUNT_PATH} --source datafs --sourceparams="file=${WIC_DATA_PARTITION_IMAGE}" --ondisk ${WIC_FSTAB_BLKDEV} --fstype=${WIC_PARTITION_TYPE} --fsoptions "defaults" --label ${WIC_DATA_PARTITION_LABEL} --align ${IMAGE_ROOTFS_ALIGNMENT} --size ${WIC_PARTITION_SIZE}
 
 bootloader --ptable ${WIC_PARTITION_TABLE_TYPE}
