@@ -137,6 +137,56 @@ def setup_parser():
     write_parser.add_argument('-j', '--src-json', dest='src_json', \
                               action='store', metavar='FILENAME', \
                               help='Specify src json filename to read from')
+    ############################################################################
+    # get commands
+    # i2c_bus, eeprom_address, eeprom_size, 'key name'
+    ############################################################################
+    get_parser = subparsers.add_parser('get', help='get key/value from eeprom')
+    get_parser.add_argument('-b', '--bus', dest='i2c_bus', \
+                              action='store', default=I2C_BUS, \
+                              help='Specify i2c bus number of EEPROM device')
+    get_parser.add_argument('-a', '--eeprom-address', dest='eeprom_address', \
+                              action='store', default=EEPROM_ADDRESS, \
+                              help='Specify eeprom address on i2c bus')
+    get_parser.add_argument('-n', '--eeprom-size', dest='eeprom_size', \
+                              action='store', default=EEPROM_SIZE, \
+                              help='Specify eeprom size in bytes')
+    get_parser.add_argument('-k', '--key-name', dest='key_name', \
+                              action='store', help='Specify key name to read from eeprom')
+    ############################################################################
+    # set commands
+    # i2c_bus, eeprom_address, eeprom_size, 'key name', 'value'
+    ############################################################################
+    set_parser = subparsers.add_parser('set', help='set key with value to eeprom')
+    set_parser.add_argument('-b', '--bus', dest='i2c_bus', \
+                              action='store', default=I2C_BUS, \
+                              help='Specify i2c bus number of EEPROM device')
+    set_parser.add_argument('-a', '--eeprom-address', dest='eeprom_address', \
+                              action='store', default=EEPROM_ADDRESS, \
+                              help='Specify eeprom address on i2c bus')
+    set_parser.add_argument('-n', '--eeprom-size', dest='eeprom_size', \
+                              action='store', default=EEPROM_SIZE, \
+                              help='Specify eeprom size in bytes')
+    set_parser.add_argument('-k', '--key-name', dest='key_name', \
+                              action='store', help='Specify key name to set to eeprom')
+    set_parser.add_argument('-v', '--value', dest='key_value', \
+                              action='store', help='Specify value for the key')
+    ############################################################################
+    # remove commands
+    # i2c_bus, eeprom_address, eeprom_size, 'key name'
+    ############################################################################
+    get_parser = subparsers.add_parser('remove', help='remove key/value from eeprom')
+    get_parser.add_argument('-b', '--bus', dest='i2c_bus', \
+                              action='store', default=I2C_BUS, \
+                              help='Specify i2c bus number of EEPROM device')
+    get_parser.add_argument('-a', '--eeprom-address', dest='eeprom_address', \
+                              action='store', default=EEPROM_ADDRESS, \
+                              help='Specify eeprom address on i2c bus')
+    get_parser.add_argument('-n', '--eeprom-size', dest='eeprom_size', \
+                              action='store', default=EEPROM_SIZE, \
+                              help='Specify eeprom size in bytes')
+    get_parser.add_argument('-k', '--key-name', dest='key_name', \
+                              action='store', help='Specify key name to read from eeprom')
     return parser
 
 def main():
@@ -156,6 +206,60 @@ def main():
             # NOTE: to ensure we have a1 2d a1 2d to indicate the end of data.
             config.update({"-": "-"})
         json_to_msgpack(int(args['i2c_bus']), int(args['eeprom_address'], 16), int(args['eeprom_size']), config)
+    elif 'cmd' in args and args['cmd'] == 'get':
+        jsdata = msgpack_to_json(int(args['i2c_bus']), int(args['eeprom_address'], 16), int(args['eeprom_size']))
+        if args['key_name'] in jsdata.keys():
+            print (f"{args['key_name']}: {jsdata[args['key_name']]}")
+        else:
+            print (f"{args['key_name']} not found.")
+    elif 'cmd' in args and args['cmd'] == 'set':
+        jsdata = msgpack_to_json(int(args['i2c_bus']), int(args['eeprom_address'], 16), int(args['eeprom_size']))
+        if jsdata != None:
+            if args['key_name'] in jsdata.keys():
+                # modify
+                try:
+                    if (int(args['key_value']) != 0):
+                        jsdata[args['key_name']] = int(args['key_value'])
+                    elif isinstance(args['key_value'], String):
+                        jsdata[args['key_name']] = f"{args['key_value']}"
+                except ValueError:
+                    jsdata[args['key_name']] = f"{args['key_value']}"
+            else:
+                # insert
+                try:
+                    if (int(args['key_value']) != 0):
+                        jsdata.update({args['key_name']: int(args['key_value'])})
+                    elif isinstance(args['key_value'], String):
+                        jsdata.update({args['key_name']: f"{args['key_value']}"})
+                except ValueError:
+                    jsdata.update({args['key_name']: f"{args['key_value']}"})
+            # NOTE: to ensure we have a1 2d a1 2d to indicate the end of data.
+            jsdata.update({"-":"-"})
+            json_to_msgpack(int(args['i2c_bus']), int(args['eeprom_address'], 16), int(args['eeprom_size']), jsdata)
+        else:
+            # noothing written to eeprom
+            jsdata = {}
+            try:
+                if (int(args['key_value']) != 0):
+                    jsdata.update({args['key_name']: int(args['key_value'])})
+                elif isinstance(args['key_value'], String):
+                    jsdata.update({args['key_name']: f"{args['key_value']}"})
+            except ValueError:
+                jsdata.update({args['key_name']: f"{args['key_value']}"})
+            # NOTE: to ensure we have a1 2d a1 2d to indicate the end of data.
+            jsdata.update({"-":"-"})
+            json_to_msgpack(int(args['i2c_bus']), int(args['eeprom_address'], 16), int(args['eeprom_size']), jsdata)
+    elif 'cmd' in args and args['cmd'] == 'remove':
+        jsdata = msgpack_to_json(int(args['i2c_bus']), int(args['eeprom_address'], 16), int(args['eeprom_size']))
+        if args['key_name'] in jsdata.keys():
+            del jsdata[args['key_name']]
+            # NOTE: to ensure we have a1 2d a1 2d to indicate the end of data.
+            jsdata.update({"-": "-"})
+            json_to_msgpack(int(args['i2c_bus']), int(args['eeprom_address'], 16), int(args['eeprom_size']), jsdata)
+        else:
+            print (f"{args['key_name']} not found.")
+
+
 
 if __name__ == "__main__":
     main()
