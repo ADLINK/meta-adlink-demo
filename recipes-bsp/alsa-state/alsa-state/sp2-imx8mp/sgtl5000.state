@@ -58,7 +58,7 @@ state.audiohdmi {
 		}
 	}
 }
-state.sgtl5000 {
+state.audiosgtl5000 {
 	control.1 {
 		iface MIXER
 		name 'PCM Playback Volume'
@@ -406,6 +406,16 @@ state.sgtl5000 {
 			count 1
 			item.0 ADC
 			item.1 I2S
+		}
+	}
+	control.29 {
+		iface CARD
+		name 'Headphone Jack'
+		value true
+		comment {
+			access read
+			type BOOLEAN
+			count 1
 		}
 	}
 }
