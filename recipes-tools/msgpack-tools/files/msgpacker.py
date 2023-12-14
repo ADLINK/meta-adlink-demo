@@ -189,6 +189,18 @@ def setup_parser():
                               action='store', help='Specify key name to read from eeprom')
     return parser
 
+def parse_kv(key, value):
+    try:
+        if int(value) != 0:
+            if key == "59#" or key == "93#":
+                return f"{value}"
+            else:
+                return int(value)
+        elif isinstance(value, String):
+            return f"{value}"
+    except ValueError:
+        return f"{value}"
+
 def main():
     # by default, arguments taken from sys.argv[1:] and convert to dict using vars() on NameSpace
     args = vars(setup_parser().parse_args())
@@ -217,35 +229,17 @@ def main():
         if jsdata != None:
             if args['key_name'] in jsdata.keys():
                 # modify
-                try:
-                    if (int(args['key_value']) != 0):
-                        jsdata[args['key_name']] = int(args['key_value'])
-                    elif isinstance(args['key_value'], String):
-                        jsdata[args['key_name']] = f"{args['key_value']}"
-                except ValueError:
-                    jsdata[args['key_name']] = f"{args['key_value']}"
+                jsdata[args['key_name']] = parse_kv(args['key_name'], args['key_value'])
             else:
                 # insert
-                try:
-                    if (int(args['key_value']) != 0):
-                        jsdata.update({args['key_name']: int(args['key_value'])})
-                    elif isinstance(args['key_value'], String):
-                        jsdata.update({args['key_name']: f"{args['key_value']}"})
-                except ValueError:
-                    jsdata.update({args['key_name']: f"{args['key_value']}"})
+                jsdata.update({args['key_name']: parse_kv(args['key_name'], args['key_value'])})
             # NOTE: to ensure we have a1 2d a1 2d to indicate the end of data.
             jsdata.update({"-":"-"})
             json_to_msgpack(int(args['i2c_bus']), int(args['eeprom_address'], 16), int(args['eeprom_size']), jsdata)
         else:
-            # noothing written to eeprom
+            # nothing written to eeprom
             jsdata = {}
-            try:
-                if (int(args['key_value']) != 0):
-                    jsdata.update({args['key_name']: int(args['key_value'])})
-                elif isinstance(args['key_value'], String):
-                    jsdata.update({args['key_name']: f"{args['key_value']}"})
-            except ValueError:
-                jsdata.update({args['key_name']: f"{args['key_value']}"})
+            jsdata.update({args['key_name']: parse_kv(args['key_name'], args['key_value'])})
             # NOTE: to ensure we have a1 2d a1 2d to indicate the end of data.
             jsdata.update({"-":"-"})
             json_to_msgpack(int(args['i2c_bus']), int(args['eeprom_address'], 16), int(args['eeprom_size']), jsdata)
