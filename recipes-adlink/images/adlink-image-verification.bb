@@ -44,10 +44,15 @@ CORE_IMAGE_EXTRA_INSTALL += " \
     ${@bb.utils.contains('MACHINE_FEATURES', 'wifi', 'wpa-supplicant', '', d)} \
 "
 
+inherit extrausers
+# clear password deprecated
+# use 'mkpasswd -m sha-512 adlink -s 00000000'
 EXTRA_USERS_PARAMS = " \
-useradd -p adlink adlink; \
+useradd -p '$6$00000000$/noRU5LR3VQ5X2EyOdcXvqd9bNRwM/PCAMxY8cvKXsjSqxezozESCRWuVphSrjGhvUjD4H9RmVBX4tcQHEQiH0' adlink; \
 usermod -a -G sudo,users,plugdev adlink; \
 "
 
-inherit extrausers
+# disk/partition related
+IMAGE_FSTYPES:append = " wic.gz wic.bmap"
+IMAGE_FSTYPES:remove = "wic wic.xz wic.zst wic.md5sum sdcard sdcard.bz2 sdcard.xz sdcard.md5sum"
 
