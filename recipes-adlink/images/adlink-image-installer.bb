@@ -34,8 +34,10 @@ require ${INSTALLER_BASE_IMAGE_INCLUDE_PATH}${INSTALLER_BASE_IMAGE}.bb
 
 # image related
 GUI_DIALOG_CMD ?= "yad"
-IMAGE_INSTALL:append = " bmap-tools installer-scripts ${GUI_DIALOG_CMD}"
-IMAGE_FEATURES += "empty-root-password"
+BOOTLOADER_TOOLS = ""
+BOOTLOADER_TOOLS:arm = "u-boot-fw-utils"
+BOOTLOADER_TOOLS:aarch64 = "u-boot-fw-utils"
+IMAGE_INSTALL:append = " bmap-tools installer-scripts ${GUI_DIALOG_CMD} ${BOOTLOADER_TOOLS}"
 IMAGE_LINGUAS = ""
 IMAGE_FSTYPES:append = " wic.gz wic.bmap"
 IMAGE_FSTYPES:remove = "wic wic.xz wic.zst wic.md5sum sdcard sdcard.bz2 sdcard.xz sdcard.md5sum"
@@ -46,12 +48,6 @@ IMAGE_BOOT_FILES:append = " \
 "
 IMAGE_ROOTFS_SIZE ?= "8192"
 IMAGE_ROOTFS_EXTRA_SPACE:append = "${@bb.utils.contains("DISTRO_FEATURES", "systemd", " + 4096", "", d)}"
-
-# imx-image-desktop specifics
-APTGET_EXTRA_PACKAGES:append = " yad"
-
-
-
 
 # partition related
 WIC_BOOTLOADER_IMAGE = "${@bb.utils.contains('IMAGE_BOOTLOADER', 'imx-boot', 'imx-boot', bb.utils.contains_any("EFI_PROVIDER", "systemd-boot", "systemd-boot", "grub-efi", d), d)}"
