@@ -102,6 +102,8 @@ RDEPENDS:packagegroup-adlink-wifi = " \
     dhcpcd \
     kea \
     hostapd \
+    crda \
+    wireless-regdb \
 "
 
 #
