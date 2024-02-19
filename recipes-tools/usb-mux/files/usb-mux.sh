@@ -13,7 +13,7 @@ function parse_args() {
 		case "$i" in
 		"USB=1")
 			value=0
-			modprobe g_mass_storage file=/dev/mmcblk2 || :
+			modprobe g_mass_storage file=/dev/mmcblk2 stall=0 removable=1 || :
 			;;
 		"USB=0")
 			value=1
