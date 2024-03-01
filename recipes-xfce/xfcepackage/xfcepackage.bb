@@ -21,4 +21,4 @@ do_install() {
 do_package_qa() {
 }
 
-INSANE_SKIP_${PN} = "already-stripped"
+INSANE_SKIP:${PN} = "already-stripped"

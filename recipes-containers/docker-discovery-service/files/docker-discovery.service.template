@@ -1,0 +1,18 @@
+[Unit]
+Description=Avahi Container for Service Discovery
+Requires=docker.service
+After=docker.service docker-compose.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=/home/adlink
+ExecStart=/usr/bin/env /usr/bin/docker-compose -f @DOCKER_COMPOSE_FILE@ up avahi
+ExecStop=/usr/bin/env /usr/bin/docker-compose -f @DOCKER_COMPOSE_FILE@ stop avahi
+RemainAfterExit=yes
+PermissionsStartOnly=true
+ExecCondition=/bin/sh -xc '/home/adlink/avahi_services.sh'
+ExecCondition=/bin/sh -xc '/usr/bin/systemctl is-active --quiet avahi-daemon.service && exit 1 || exit 0'
+
+[Install]
+WantedBy=multi-user.target
+
