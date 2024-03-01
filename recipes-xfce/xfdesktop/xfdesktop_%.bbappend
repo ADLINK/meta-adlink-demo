@@ -14,4 +14,4 @@ do_configure:append() {
  cp -a ${WORKDIR}/adlink.jpg  ${WORKDIR}/xfdesktop-4.14.2/backgrounds 
 }
 
-FILES:${PN} += "${datadir}/backgrounds"
+FILES_${PN} += "${datadir}/backgrounds"

@@ -29,8 +29,8 @@ do_install() {
 do_package_qa() {
 }
 
-FILES:${PN}-dev += " ${includedir}/cryptoauthlib/"
-FILES:${PN}-dev += " ${libdir_native}/libcryptoauth.so"
-FILES:${PN} += " ${sysconfdir}/cryptoauthlib/"
-FILES:${PN} += " ${localstatedir}/lib/cryptoauthlib/"
-FILES:${PN} += " ${bindir}/atecc-util"
+FILES_${PN}-dev += " ${includedir}/cryptoauthlib/"
+FILES_${PN}-dev += " ${libdir_native}/libcryptoauth.so"
+FILES_${PN} += " ${sysconfdir}/cryptoauthlib/"
+FILES_${PN} += " ${localstatedir}/lib/cryptoauthlib/"
+FILES_${PN} += " ${bindir}/atecc-util"

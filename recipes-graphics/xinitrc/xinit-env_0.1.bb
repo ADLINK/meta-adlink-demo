@@ -17,4 +17,4 @@ do_install() {
 	install -m 0755 ${S}/xinitrc ${D}/home/root/.xinitrc
 }
 
-FILES:${PN} += "/home/root/.xinitrc"
+FILES_${PN} += "/home/root/.xinitrc"

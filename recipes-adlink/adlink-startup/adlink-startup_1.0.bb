@@ -15,8 +15,8 @@ SRC_URI = "\
 inherit pkgconfig systemd update-rc.d useradd
 
 SYSTEMD_PACKAGES += "${PN}"
-SYSTEMD_SERVICE:${PN} = "adlink-startup.service"
-SYSTEMD_AUTO_ENABLE:${PN} = "enable"
+SYSTEMD_SERVICE_${PN} = "adlink-startup.service"
+SYSTEMD_AUTO_ENABLE_${PN} = "enable"
 
 INITSCRIPT_NAME = "adlink-startup"
 INITSCRIPT_PARAMS = "start 99 2 3 4 5 . stop 19 0 1 6 ."

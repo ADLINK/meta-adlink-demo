@@ -1,6 +1,0 @@
-[Match]
-Name=veth*
-
-[Link]
-Unmanaged=yes
-

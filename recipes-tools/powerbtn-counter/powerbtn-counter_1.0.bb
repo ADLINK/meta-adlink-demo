@@ -13,7 +13,7 @@ do_install() {
     install -m 0755 ${WORKDIR}/powerbtn-counter.sh ${D}/usr${base_bindir}/
 }
 
-FILES:${PN} += " /usr${base_bindir}/powerbtn-counter.sh"
+FILES_${PN} += " /usr${base_bindir}/powerbtn-counter.sh"
 
-RDEPENDS:${PN} += "acpid"
+RDEPENDS_${PN} += "acpid"
 

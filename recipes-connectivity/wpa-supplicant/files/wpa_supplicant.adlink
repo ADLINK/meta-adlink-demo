@@ -1,6 +1,0 @@
-network={
-	ssid="dlink-dir-1260"
-	scan_ssid=1
-	#psk="password=ADLINK"
-	psk=f09b13511a07541ca7aeda5a8f748bde51318dc97385225778428e47501cef6f
-}

@@ -1,9 +1,0 @@
-[Unit]
-Description=LVDS Spread Spectrum Adjustment
-
-[Service]
-Type=oneshot
-ExecStart=/bin/sh -c '/unit_tests/memtool -32 0x30360034=0x80010102'
-
-[Install]
-WantedBy=multi-user.target

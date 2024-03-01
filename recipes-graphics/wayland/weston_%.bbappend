@@ -11,4 +11,4 @@ do_install:append() {
    install ${WORKDIR}/adlink.jpg ${D}${datadir}/weston
 }
 
-FILES:${PN} += "${datadir/weston}"
+FILES_${PN} += "${datadir/weston}"
