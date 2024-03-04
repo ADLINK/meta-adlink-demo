@@ -89,6 +89,9 @@ RDEPENDS:packagegroup-adlink-benchmarks = " \
     phoronix-test-suite \
 "
 
+RDEPENDS_GROUP_EXTRA_WIFI ?= ""
+RDEPENDS_GROUP_EXTRA_WIFI:sp2-imx8mp = "crda wireless-regdb"
+
 #
 # packages added by adlink tools for wifi
 #
@@ -102,8 +105,7 @@ RDEPENDS:packagegroup-adlink-wifi = " \
     dhcpcd \
     kea \
     hostapd \
-    crda \
-    wireless-regdb \
+    ${RDEPENDS_GROUP_EXTRA_WIFI} \
 "
 
 #
@@ -134,6 +136,9 @@ RDEPENDS:packagegroup-adlink-tools = " \
     ${PKG_TPM} \
 "
 
+RDEPENDS_GROUP_EXTRA_UTILS ?= ""
+RDEPENDS_GROUP_EXTRA_UTILS:sp2-imx8mp = "edid-decode"
+
 SUMMARY:packagegroup-adlink-utils = "Adlink Utils Support"
 RDEPENDS:packagegroup-adlink-utils = " \
     alsa-utils \
@@ -149,7 +154,6 @@ RDEPENDS:packagegroup-adlink-utils = " \
     dtc \
     e2fsprogs-mke2fs \
     e2fsprogs-resize2fs \
-    edid-decode \
     evtest \
     fbset \
     fb-test \
@@ -177,7 +181,11 @@ RDEPENDS:packagegroup-adlink-utils = " \
     wget \
     ${@bb.utils.contains('PACKAGE_CLASSES', 'package_rpm', 'dnf', '', d)} \
     ${@bb.utils.contains('IMAGE_FEATURES', 'ssh-server-openssh', 'packagegroup-core-ssh-openssh openssh openssh-sftp-server', '', d)} \
+    ${RDEPENDS_GROUP_EXTRA_UTILS} \
 "
+
+RDEPENDS_GROUP_EXTRA_NET ?= ""
+RDEPENDS_GROUP_EXTRA_NET:sp2-imx8mp = " mdio-tools mdio-netlink"
 
 #
 # packages added by adlink basic network tools
@@ -195,8 +203,7 @@ RDEPENDS:packagegroup-adlink-net = " \
     bridge-utils \
     net-tools \
     ethtool \
-    mdio-tools \
-    mdio-netlink \
+    ${RDEPENDS_GROUP_EXTRA_NET} \
 "
 
 #
