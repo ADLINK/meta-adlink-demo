@@ -45,8 +45,8 @@ DOCKERHUB_IMAGE ?= "lighttpd"
 
 # docker-hub images with specific CPU architectures
 DOCKERHUB_PLATFORM ?= "amd64"
-DOCKERHUB_PLATFORM_aarch64 = "arm64v8"
-DOCKERHUB_PLATFORM_arm = "arm32v7"
+DOCKERHUB_PLATFORM:aarch64 = "arm64v8"
+DOCKERHUB_PLATFORM:arm = "arm32v7"
 
 # Docker Containers Built Locally
 # e.g. LOCAL_CONTAINER_IMAGES = "container-image-lighttpd"
@@ -59,13 +59,13 @@ EXPORT_DOCKER_PARTITION_IMAGE ?= "docker-data-partition.img"
 # Using dockerhub images for health check
 HEALTHCHECK_EXPORT_IMAGE = "healthcheck.tar"
 
-HEALTHCHECK_REPOSITORY_aarch64 = "arm64v8/hello-world"
-HEALTHCHECK_PLATFORM_aarch64 = "linux/arm64"
+HEALTHCHECK_REPOSITORY:aarch64 = "arm64v8/hello-world"
+HEALTHCHECK_PLATFORM:aarch64 = "linux/arm64"
 
-HEALTHCHECK_REPOSITORY_arm = "arm32v7/hello-world"
-HEALTHCHECK_PLATFORM_arm = "linux/arm"
+HEALTHCHECK_REPOSITORY:arm = "arm32v7/hello-world"
+HEALTHCHECK_PLATFORM:arm = "linux/arm"
 
 # Target DockerHub image
 TARGET_PLATFORM = "linux/amd64"
-TARGET_PLATFORM_aarch64 = "linux/arm64"
+TARGET_PLATFORM:aarch64 = "linux/arm64"
 
