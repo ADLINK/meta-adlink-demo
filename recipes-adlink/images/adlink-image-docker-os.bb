@@ -45,11 +45,12 @@ CORE_IMAGE_EXTRA_INSTALL += " \
     ${@bb.utils.contains('DISTRO_FEATURES', 'wayland', 'weston-init', '', d)} \
     ${@bb.utils.contains('DISTRO_FEATURES', 'x11 wayland', 'weston-xwayland xterm', '', d)} \
     ${@bb.utils.contains('MACHINE_FEATURES', 'wifi', 'wpa-supplicant iw', '', d)} \
-    ipxe-bin dnsmasq python3-pyudev python3-pyserial python3-flask python3-psutil \
-    docker-build-lava-dispatcher docker-startup-service docker-discovery-service \
+    dnsmasq python3-pyudev python3-pyserial python3-flask python3-psutil \
+    docker-startup-service \
 "
 
-CORE_IMAGE_EXTRA_INSTALL:append:raspberrypi3-64 = " raspi-gpio rpi-gpio"
+# note: docker-discovery-service is avahi in a container
+CORE_IMAGE_EXTRA_INSTALL:append:raspberrypi3-64 = " docker-build-lava-dispatcher raspi-gpio rpi-gpio ipxe-bin docker-discovery-service"
 
 # raw image setting
 IMAGE_ROOTFS_SIZE ?= "8192"
