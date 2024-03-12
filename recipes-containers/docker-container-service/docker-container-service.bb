@@ -26,6 +26,6 @@ do_install () {
 	ln -sf ${systemd_unitdir}/system/docker-container.service ${D}${sysconfdir}/systemd/system/multi-user.target.wants/docker-container.service
 }
 
-FILES:${PN} += "/lib/systemd/system/"
+FILES:${PN} += "${sysconfdir}/systemd/system/multi-user.target.wants/ ${systemd_unitdir}/system/"
 
 RDEPENDS:${PN} += "systemd-container"
