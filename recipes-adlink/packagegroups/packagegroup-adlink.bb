@@ -90,7 +90,7 @@ RDEPENDS:packagegroup-adlink-benchmarks = " \
 "
 
 RDEPENDS_GROUP_EXTRA_WIFI ?= ""
-RDEPENDS_GROUP_EXTRA_WIFI:sp2-imx8mp = "crda wireless-regdb"
+RDEPENDS_GROUP_EXTRA_WIFI:sp2-imx8mp = "crda wireless-regdb-static"
 
 #
 # packages added by adlink tools for wifi
