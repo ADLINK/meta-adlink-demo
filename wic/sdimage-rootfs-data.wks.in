@@ -1,0 +1,11 @@
+# short-description: Create Raspberry Pi SD card image
+# long-description: Creates a partitioned SD card image for use with
+# Raspberry Pi. Boot files are located in the first vfat partition.
+# with additional docker data partition
+
+part /boot --source bootimg-partition --ondisk ${WIC_FSTAB_BLKDEV} --fstype=vfat --label boot --active --align ${IMAGE_ROOTFS_ALIGNMENT} --size 32
+part / --source rootfs --ondisk ${WIC_FSTAB_BLKDEV} --fstype=ext4 --label root --align ${IMAGE_ROOTFS_ALIGNMENT} --size 8192
+part ${WIC_DATA_PARTITION_MOUNT_PATH} --source datafs --sourceparams="file=${WIC_DATA_PARTITION_IMAGE}" --ondisk ${WIC_FSTAB_BLKDEV} --fstype=ext4 --fsoptions "defaults" --label ${WIC_DATA_PARTITION_LABEL} --align ${IMAGE_ROOTFS_ALIGNMENT} --size ${WIC_PARTITION_SIZE}
+
+bootloader --ptable ${WIC_PARTITION_TABLE_TYPE}
+

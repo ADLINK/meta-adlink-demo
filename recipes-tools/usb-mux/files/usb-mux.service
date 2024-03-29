@@ -1,0 +1,9 @@
+[Unit]
+Description=Default USB Mux to host
+
+[Service]
+Type=oneshot
+ExecStart=/bin/sh -c 'if [ "$(head -1 /sys/class/extcon/extcon0/state)" = "USB=1" ]; then /usr/sbin/usb-mux.sh USB=1; else /usr/sbin/usb-mux.sh USB=0; fi'
+
+[Install]
+WantedBy=multi-user.target

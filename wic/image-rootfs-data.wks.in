@@ -1,0 +1,27 @@
+# short-description: Create SD card image with an additional data partition
+# long-description:
+# Create an common image with an extra data partition that can be written onto
+# a SD card using dd for various SOM
+#
+# The disk layout used is:
+#  - ------------- --------------- ---------------------------------------
+# | |  bootloader |  boot/efi     |      rootfs        |    data          |
+#  - ------------- --------------- ---------------------------------------
+# ^ ^             ^               ^                    ^
+# | |             |               |                    |
+# 0 + offset(KiB) |               |                    |
+#                 + 4MiB          |                    |
+#                                 + Reminaining GiB    |
+#                                                      + docker data partition
+#                                                        mount as /var/lib/docker
+#                                                        (default 8.152 GiB)
+#
+# e.g. for imx8:
+#      part u-boot --source rawcopy --sourceparams="file=imx-boot" --ondisk mmcblk2 --no-table --align 32
+#
+part u-boot --source rawcopy --sourceparams="file=${WIC_BOOTLOADER_IMAGE}" --ondisk ${WIC_FSTAB_BLKDEV} --no-table --align ${WIC_BOOTLOADER_OFFSET}
+part /boot --source bootimg-partition --ondisk ${WIC_FSTAB_BLKDEV} --fstype=vfat --label boot --active --align ${IMAGE_ROOTFS_ALIGNMENT} --size 32
+part / --source rootfs --ondisk ${WIC_FSTAB_BLKDEV} --fstype=ext4 --label root --align ${IMAGE_ROOTFS_ALIGNMENT}
+part ${WIC_DATA_PARTITION_MOUNT_PATH} --source datafs --sourceparams="file=${WIC_DATA_PARTITION_IMAGE}" --ondisk ${WIC_FSTAB_BLKDEV} --fstype=${WIC_PARTITION_TYPE} --fsoptions "defaults" --label ${WIC_DATA_PARTITION_LABEL} --align ${IMAGE_ROOTFS_ALIGNMENT} --size ${WIC_PARTITION_SIZE}
+
+bootloader --ptable ${WIC_PARTITION_TABLE_TYPE}

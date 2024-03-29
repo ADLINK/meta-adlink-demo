@@ -1,0 +1,11 @@
+[Unit]
+Description=Update Forwarding Port in PREROUTING chain of NAT Iptables to KVM VMs
+
+[Service]
+# Start port forwarding on host when KVM VM is started
+EnvironmentFile=/etc/libvirt/.%I.conf
+ExecStart=/usr/local/bin/vmportforward $ACTION %I $IP $PORT
+
+[Install]
+WantedBy=multi-user.target
+
