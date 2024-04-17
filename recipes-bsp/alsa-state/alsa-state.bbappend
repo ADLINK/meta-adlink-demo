@@ -8,3 +8,6 @@ do_install:append:sp2-imx8mp() {
     install -d ${D}/${localstatedir}/lib/alsa
     install -m 0644 ${WORKDIR}/sgtl5000.state ${D}${localstatedir}/lib/alsa/asound.state
 }
+
+FILES:${PN} += "${localstatedir}/lib/alsa/*.state"
+
