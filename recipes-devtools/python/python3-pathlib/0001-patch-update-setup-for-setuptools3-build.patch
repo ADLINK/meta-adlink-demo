@@ -1,0 +1,59 @@
+From a0e6911ec62c56faed1cc248b0a074141a173b9d Mon Sep 17 00:00:00 2001
+From: "po.cheng" <po.cheng@adlinktech.com>
+Date: Thu, 20 Jun 2024 13:07:52 +0800
+Subject: [PATCH] patch: update setup for setuptools3 build
+
+Signed-off-by: po.cheng <po.cheng@adlinktech.com>
+---
+ pathlib.py |  2 +-
+ setup.cfg  | 10 ++++++++++
+ setup.py   |  4 ++--
+ 3 files changed, 13 insertions(+), 3 deletions(-)
+ create mode 100644 setup.cfg
+
+diff --git a/pathlib.py b/pathlib.py
+index 9ab0e70..0beae11 100644
+--- a/pathlib.py
++++ b/pathlib.py
+@@ -7,7 +7,7 @@ import posixpath
+ import re
+ import sys
+ import time
+-from collections import Sequence
++from collections.abc import Sequence
+ from contextlib import contextmanager
+ from errno import EINVAL, ENOENT
+ from operator import attrgetter
+diff --git a/setup.cfg b/setup.cfg
+new file mode 100644
+index 0000000..7f84630
+--- /dev/null
++++ b/setup.cfg
+@@ -0,0 +1,10 @@
++[bdist_wheel]
++universal = 1
++
++[metadata]
++license_file = LICENSE.txt
++
++[egg_info]
++tag_build =
++tag_date = 0
++
+diff --git a/setup.py b/setup.py
+index 2690229..e58f3ff 100755
+--- a/setup.py
++++ b/setup.py
+@@ -1,7 +1,7 @@
+ #!/usr/bin/env python3
+-import sys
+-from distutils.core import setup
+ 
++import sys
++from setuptools import setup
+ 
+ setup(
+     name='pathlib',
+-- 
+2.25.1
+
