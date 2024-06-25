@@ -1,0 +1,12 @@
+version: '2'
+services:
+  emu-web:
+    build:
+      args:
+        tgtplatform: __TARGET_PLATFORM__
+      context: ./
+    container_name: emu-web
+    hostname: emu-web
+    image: __DOCKER_IMAGE_PREFIX__/__IMAGE_NAME__
+    ports:
+    - 80:6166
