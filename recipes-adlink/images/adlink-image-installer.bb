@@ -49,37 +49,10 @@ IMAGE_BOOT_FILES:append = " \
 IMAGE_ROOTFS_SIZE ?= "8192"
 IMAGE_ROOTFS_EXTRA_SPACE:append = "${@bb.utils.contains("DISTRO_FEATURES", "systemd", " + 4096", "", d)}"
 
-# partition related
-WIC_BOOTLOADER_IMAGE = "${@bb.utils.contains('IMAGE_BOOTLOADER', 'imx-boot', 'imx-boot', bb.utils.contains_any("EFI_PROVIDER", "systemd-boot", "systemd-boot", "grub-efi", d), d)}"
-WIC_BOOTLOADER_OFFSET = "${IMX_BOOT_SEEK}"
-WKS_FILE = "image-rootfs-data.wks.in"
-WIC_FSTAB_BLKDEV ?= "mmcblk0"
-# IMAGE_ROOTFS_ALIGNMENT ?= "1"
-WIC_DATA_PARTITION_MOUNT_PATH = "/installer"
-WIC_DATA_PARTITION_IMAGE ?= "${INSTALLER_TARGET_IMAGE}_image-datapart.${WIC_PARTITION_TYPE}"
-WIC_DATA_PARTITION_LABEL ?= "images"
-WIC_PARTITION_SIZE ?= "4096"
-WIC_PARTITION_TYPE ?= "ext4"
-WIC_PARTITION_TABLE_TYPE ?= "msdos"
-
 # NOTE: no need to include image-datapart in IMAGE_INSTALL because
 # image-datapart only produce data partition image with packaged wic image.
 # The data partition is flashed by datafs.py modification
-DEPENDS:append = " image-datapart adlink-image-initrd"
+DEPENDS += "image-datapart adlink-image-initrd"
 
-do_calc_wic[depends] = "image-datapart:do_deploy"
-do_calc_wic () {
-	FILE_SIZE=$(du -m ${DEPLOY_DIR_IMAGE}/${INSTALLER_TARGET_IMAGE}_image-datapart.${WIC_PARTITION_TYPE} | awk '{print $1}')
-	bbnote "${DEPLOY_DIR_IMAGE}/${INSTALLER_TARGET_IMAGE}_image-datapart.${INSTALLER_IMAGE_FSTYPE} = ${FILE_SIZE} MB..."
-	if [ ${FILE_SIZE} -lt 4096 ]; then
-		WIC_PARTITION_SIZE=4096
-	elif [ ${FILE_SIZE} -lt 8192 ]; then
-		WIC_PARTITION_SIZE=8192
-	else
-		WIC_PARTITION_SIZE=16384
-	fi
-	bbnote "WIC_PARTITION_SIZE = ${WIC_PARTITION_SIZE} MB..."
-	WIC_DATA_PARTITION_IMAGE="${INSTALLER_TARGET_IMAGE}_image-datapart.${WIC_PARTITION_TYPE}"
-}
-addtask calc_wic before do_image_wic
+include datapart-conf.inc
 

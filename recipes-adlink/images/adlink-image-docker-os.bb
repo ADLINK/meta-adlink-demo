@@ -57,20 +57,6 @@ IMAGE_ROOTFS_SIZE ?= "8192"
 IMAGE_ROOTFS_EXTRA_SPACE = "4096"
 IMAGE_ROOTFS_EXTRA_SPACE:append = "${@bb.utils.contains('DISTRO_FEATURES', 'systemd', ' + 4096', '', d)}"
 
-# adlink-image-docker-os WIC template required configurations
-WIC_IMAGE_BOOT_LOADER = "${@bb.utils.contains_any("EFI_PROVIDER", "systemd-boot", "systemd-boot", "grub-efi", d)}"
-WKS_FILE ?= "image-rootfs-data.wks.in"
-WKS_FILE:raspberrypi3 = "sdimage-rootfs-data.wks.in"
-WKS_FILE:raspberrypi3-64 = "sdimage-rootfs-data.wks.in"
-WKS_FILE:intel-corei7-64 = "efi-bootdisk-microcode-data.wks.in"
-WIC_FSTAB_BLKDEV ?= "mmcblk0"
-IMAGE_ROOTFS_ALIGNMENT ?= "4096"
-WIC_DATA_PARTITION_MOUNT_PATH ?= "/var/lib/docker"
-WIC_DATA_PARTITION_IMAGE ?= "docker-data-partition.img"
-WIC_DATA_PARTITION_LABEL ?= "docker"
-WIC_PARTITION_SIZE ?= "8196"
-WIC_PARTITION_TABLE_TYPE ?= "msdos"
-
 # clear password deprecated
 # use 'mkpasswd -m sha-512 adlink -s 00000000'
 EXTRA_USERS_PARAMS = " \
@@ -83,8 +69,9 @@ inherit core-image extrausers
 # NOTE: no need to include docker-datapart in IMAGE_INSTALL because
 # docker-datapart only produce the extracted data partition for docker engine
 # the data partition is flashed by WIC (with datafs.py modification)
-DEPENDS:append = " docker-datapart"
-MOUNT_PREFIX = ""
+DEPENDS += "docker-datapart"
+
+include datapart-conf.inc
 
 IMAGE_CMD_dataimg:prepend () {
   if [ -f ${DEPLOY_DIR_IMAGE}/${TARGET_DOCKER_PARTITION_IMAGE}.${IMAGE_COMPRESS_TYPE} ]; then
