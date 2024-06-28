@@ -120,9 +120,8 @@ do_compile () {
 }
 
 do_deploy () {
-  install -d ${DEPLOY_DIR_IMAGE}
   if [ -f ${B}/${DOCKERHUB_IMAGE}-${DOCKERHUB_TAG}.tar ]; then
-    install -m 644 ${B}/${DOCKERHUB_IMAGE}-${DOCKERHUB_TAG}.tar ${DEPLOY_DIR_IMAGE}/${DOCKERHUB_IMAGE}-${DOCKERHUB_TAG}.tar
+    install -m 644 ${B}/${DOCKERHUB_IMAGE}-${DOCKERHUB_TAG}.tar ${DEPLOYDIR}/${DOCKERHUB_IMAGE}-${DOCKERHUB_TAG}.tar
   else
     bbfatal "${B}/${DOCKERHUB_IMAGE}-${DOCKERHUB_TAG}.tar not found. Please ensure docker-rootfs exported docker container file system correctly."
   fi

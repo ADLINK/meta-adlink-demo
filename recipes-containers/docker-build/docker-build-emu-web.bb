@@ -70,7 +70,6 @@ addtask clear_base before do_compile after do_configure
 inherit deploy
 
 do_deploy () {
-	install -d ${DEPLOY_DIR_IMAGE}
 	for dimg in ${DOCKER_COMPOSE_IMAGES}; do
 		if which ${COMPRESSCMD} ; then
 			if [ -f ${B}/${dimg}.${IMAGE_COMPRESS_TYPE} ]; then

@@ -134,7 +134,7 @@ do_postfetch () {
 		echo "EXPORT_CONTAINER_IMAGES: ${EXPORT_CONTAINER_IMAGES}"
 		for img in ${EXPORT_CONTAINER_IMAGES}; do
 			if [ -e ${TMPDIR}/deploy/images/${MACHINE}/${img} ]; then
-				install -m 644 ${TMPDIR}/deploy/images/${MACHINE}/${img} ${S}/container/${img}
+				install -m 0644 ${TMPDIR}/deploy/images/${MACHINE}/${img} ${S}/container/${img}
 			else
 				bbfatal "${TMPDIR}/deploy/images/${MACHINE}/${img} not found.\nplease bitbake ${img} separately..."
 			fi
@@ -206,14 +206,13 @@ do_compile () {
 }
 
 do_deploy () {
-	install -d ${DEPLOY_DIR_IMAGE}
 	if [ -f ${B}/${EXPORT_DOCKER_PARTITION_IMAGE} ]; then
-		install -m 644 ${B}/${EXPORT_DOCKER_PARTITION_IMAGE} ${DEPLOY_DIR_IMAGE}/${EXPORT_DOCKER_PARTITION_IMAGE}
+		install -m 0644 ${B}/${EXPORT_DOCKER_PARTITION_IMAGE} ${DEPLOYDIR}/${EXPORT_DOCKER_PARTITION_IMAGE}
 	else
 		bbfatal "${B}/${EXPORT_DOCKER_PARTITION_IMAGE} not found. Please ensure docker-datapart exported docker container images correctly. (Please also check your DOCKER_SHAREDIR setting is accessible for both build and sibling container environments"
 	fi
 	if [ -f ${B}/${EXPORT_DOCKER_PARTITION_IMAGE}.${IMAGE_COMPRESS_TYPE} ]; then
-		install -m 644 ${B}/${EXPORT_DOCKER_PARTITION_IMAGE}.${IMAGE_COMPRESS_TYPE} ${DEPLOY_DIR_IMAGE}/${EXPORT_DOCKER_PARTITION_IMAGE}.${IMAGE_COMPRESS_TYPE}
+		install -m 0644 ${B}/${EXPORT_DOCKER_PARTITION_IMAGE}.${IMAGE_COMPRESS_TYPE} ${DEPLOYDIR}/${EXPORT_DOCKER_PARTITION_IMAGE}.${IMAGE_COMPRESS_TYPE}
 	fi
 }
 addtask deploy before do_package after do_install

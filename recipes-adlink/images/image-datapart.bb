@@ -87,9 +87,8 @@ do_compile () {
 
 inherit deploy
 do_deploy () {
-  install -d ${DEPLOY_DIR_IMAGE}
   if [ -f ${S}/${INSTALLER_TARGET_IMAGE}_${PN}.${WIC_PARTITION_TYPE} ]; then
-    install -m 644 ${S}/${INSTALLER_TARGET_IMAGE}_${PN}.${WIC_PARTITION_TYPE} ${DEPLOY_DIR_IMAGE}/${INSTALLER_TARGET_IMAGE}_${PN}.${WIC_PARTITION_TYPE}
+    install -m 0644 ${S}/${INSTALLER_TARGET_IMAGE}_${PN}.${WIC_PARTITION_TYPE} ${DEPLOYDIR}/${INSTALLER_TARGET_IMAGE}_${PN}.${WIC_PARTITION_TYPE}
   else
     bbfatal "${S}/${INSTALLER_TARGET_IMAGE}_${PN}.${WIC_PARTITION_TYPE} was not generated."
   fi

@@ -129,17 +129,16 @@ do_install:append () {
 inherit deploy
 
 do_deploy () {
-	install -d ${DEPLOY_DIR_IMAGE}
 	for dimg in ${DOCKER_COMPOSE_IMAGES}; do
 		if which ${COMPRESSCMD} ; then
 			if [ -f ${B}/${dimg}.${IMAGE_COMPRESS_TYPE} ]; then
-				install -m 644 ${B}/${dimg}.${IMAGE_COMPRESS_TYPE} ${DEPLOY_DIR_IMAGE}/docker-build-${dimg}.${IMAGE_COMPRESS_TYPE}
+				install -m 0644 ${B}/${dimg}.${IMAGE_COMPRESS_TYPE} ${DEPLOYDIR}/docker-build-${dimg}.${IMAGE_COMPRESS_TYPE}
 			else
 				bbfatal "${B}/${dimg}.${IMAGE_COMPRESS_TYPE} not found."
 			fi
 		else
 			if [ -f ${B}/${dimg}.tar ]; then
-				install -m 644 ${B}/${dimg}.tar ${DEPLOY_DIR_IMAGE}/docker-build-${dimg}.tar
+				install -m 0644 ${B}/${dimg}.tar ${DEPLOYDIR}/docker-build-${dimg}.tar
 			else
 				bbfatal "${B}/${dimg}.tar not found."
 			fi
