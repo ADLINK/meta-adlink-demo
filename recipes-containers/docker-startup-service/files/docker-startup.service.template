@@ -1,16 +1,16 @@
 [Unit]
-Description=Docker Compose Service
+Description=Docker Startup Service
 Requires=docker.service
 After=docker.service
 
 [Service]
 Type=oneshot
 WorkingDirectory=/etc/
-ExecStart=/usr/bin/env /usr/bin/docker-compose -f @DOCKER_COMPOSE_FILE@ up -d @DOCKER_RUN_IMAGES@
-ExecStop=/usr/bin/env /usr/bin/docker-compose -f @DOCKER_COMPOSE_FILE@ stop @DOCKER_RUN_IMAGES@
+ExecStart=/usr/bin/env @DOCKER_COMPOSE_CMD@ @DOCKER_COMPOSE_FILE@ @DOCKER_COMPOSE_START_ARGS@ @DOCKER_RUN_IMAGES@
+ExecStop=/usr/bin/env @DOCKER_COMPOSE_CMD@ @DOCKER_COMPOSE_FILE@ @DOCKER_COMPOSE_STOP_ARGS@ @DOCKER_RUN_IMAGES@
 RemainAfterExit=yes
 PermissionsStartOnly=true
-ExecStartPre=-/bin/sh -c '/home/adlink/udev_reload.sh'
+ExecStartPre=-/bin/sh -c '@DOCKER_EXTRA_STARTUP_SCRIPT@'
 
 [Install]
 WantedBy=multi-user.target
