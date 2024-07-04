@@ -126,27 +126,6 @@ do_install:append () {
 	fi
 }
 
-inherit deploy
-
-do_deploy () {
-	for dimg in ${DOCKER_COMPOSE_IMAGES}; do
-		if which ${COMPRESSCMD} ; then
-			if [ -f ${B}/${dimg}.${IMAGE_COMPRESS_TYPE} ]; then
-				install -m 0644 ${B}/${dimg}.${IMAGE_COMPRESS_TYPE} ${DEPLOYDIR}/docker-build-${dimg}.${IMAGE_COMPRESS_TYPE}
-			else
-				bbfatal "${B}/${dimg}.${IMAGE_COMPRESS_TYPE} not found."
-			fi
-		else
-			if [ -f ${B}/${dimg}.tar ]; then
-				install -m 0644 ${B}/${dimg}.tar ${DEPLOYDIR}/docker-build-${dimg}.tar
-			else
-				bbfatal "${B}/${dimg}.tar not found."
-			fi
-		fi
-	done
-}
-addtask deploy before do_package after do_compile
-
 RDEPENDS:${PN} += "python3-pyudev python3-pyserial python3-flask python3-psutil"
 
 FILES:${PN} += "/home/adlink/ ${sysconfdir}/systemd/system/multi-user.target.wants/ ${systemd_unitdir}/system/"
