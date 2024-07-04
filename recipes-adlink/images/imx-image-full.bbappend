@@ -1,3 +1,1 @@
-DEPENDS += "docker-datapart"
-
-include datapart-conf.inc
+include ${@bb.utils.contains_any('DEPENDS', 'docker-datapart image-datapart', 'datapart-conf.inc', '', d)}

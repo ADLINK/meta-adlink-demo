@@ -54,5 +54,5 @@ IMAGE_ROOTFS_EXTRA_SPACE:append = "${@bb.utils.contains("DISTRO_FEATURES", "syst
 # The data partition is flashed by datafs.py modification
 DEPENDS += "image-datapart adlink-image-initrd"
 
-include datapart-conf.inc
+include ${@bb.utils.contains_any('DEPENDS', 'docker-datapart image-datapart', 'datapart-conf.inc', '', d)}
 

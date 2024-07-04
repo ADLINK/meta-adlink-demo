@@ -71,7 +71,7 @@ inherit core-image extrausers
 # the data partition is flashed by WIC (with datafs.py modification)
 DEPENDS += "docker-datapart"
 
-include datapart-conf.inc
+include ${@bb.utils.contains_any('DEPENDS', 'docker-datapart image-datapart', 'datapart-conf.inc', '', d)}
 
 IMAGE_CMD_dataimg:prepend () {
   if [ -f ${DEPLOY_DIR_IMAGE}/${TARGET_DOCKER_PARTITION_IMAGE}.${IMAGE_COMPRESS_TYPE} ]; then
