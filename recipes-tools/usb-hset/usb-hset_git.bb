@@ -1,8 +1,8 @@
 SUMMARY = "Linux example code that accompanies MCHP USB Smart hubs"
 HOMEPAGE = "https://github.com/MicrochipTech/USB-Hub-Linux-Examples"
 SECTION = "network"
-LICENSE = "LGPLv2.1-only"
-LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/LGPL-2.1-only;md5=1a6d268fd218675ffea8be556788b780"
+LICENSE = "LGPLv2.1"
+LIC_FILES_CHKSUM = "file://LICENSE;md5=1803fa9c2c3ce8cb06b4861d75310742"
 
 SRCSERVER = "git://github.com/MicrochipTech/USB-Hub-Linux-Examples.git"
 SRCBRANCH = "master"
