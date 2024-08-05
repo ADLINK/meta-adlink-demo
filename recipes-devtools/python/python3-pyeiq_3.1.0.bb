@@ -21,7 +21,6 @@ do_install:append () {
 
 RDEPENDS:${PN} += "\
 	python3-requests (>= 2.19) \
-	python3-pathlib (= 1.0.1) \
 	python3-cffi (>= 1.10.0) \
 	python3-certifi (>= 2017.4.17) \
 	python3-idna (>= 2.5) \
