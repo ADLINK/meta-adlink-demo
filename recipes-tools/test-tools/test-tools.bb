@@ -42,7 +42,6 @@ do_install() {
     install -m 0755 ${WORKDIR}/USB31_TX_COMPLIANCE ${D}${bindir}
     install -m 0755 ${WORKDIR}/USBTest ${D}${bindir}
     install -m 0755 ${WORKDIR}/UTest.sh ${D}${bindir}
-    install -m 0755 ${WORKDIR}/uart_test ${D}${bindir}
 }
 do_install:append:lec-imx8mm() {
     install -m 0755 ${WORKDIR}/uart_test ${D}${bindir}
