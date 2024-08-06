@@ -16,6 +16,10 @@ do_install:append() {
 	# gpiomon-action.py
 	install -d ${D}${sbindir}
 	install -m 755 ${S}/usb-mux.sh ${D}${sbindir}/usb-mux.sh
+	if [ "${DISTRO_CODENAME}" = "scarthgap" ]; then
+		bbnote "modify gpioset command to specify -c gpio_num"
+		sed -e 's,gpioset,gpioset -t0 -c,g' -i ${D}${sbindir}/usb-mux.sh
+	fi
 
 	# add the service to /etc/udev/rules.d/
 	install -d ${D}${sysconfdir}/udev/rules.d/
