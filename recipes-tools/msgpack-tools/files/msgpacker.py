@@ -196,7 +196,7 @@ def parse_kv(key, value):
                 return f"{value}"
             else:
                 return int(value)
-        elif isinstance(value, String):
+        elif isinstance(value, str if sys.version_info[0] >= 3 else basestring):
             return f"{value}"
     except ValueError:
         return f"{value}"
