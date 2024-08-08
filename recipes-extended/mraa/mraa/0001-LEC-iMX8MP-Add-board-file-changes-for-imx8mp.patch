@@ -1,4 +1,4 @@
-From a90ee8e196f55b5cb669f36392534d030b3f1c53 Mon Sep 17 00:00:00 2001
+From ece13b583a4457473ed5d1860bfe3a8ef77633ef Mon Sep 17 00:00:00 2001
 From: Arun Kumar EV <arunkumar.ev@adlinktech.com>
 Date: Thu, 29 Apr 2021 13:08:35 +0530
 Subject: [PATCH 1/2] LEC-iMX8MP: Add board file changes for imx8mp
@@ -7,21 +7,37 @@ Add board file changes for ipi imx8mp.
 define additional uart, spi and i2c
 
 Signed-off-by: Arun Kumar EV <arunkumar.ev@adlinktech.com>
+---
+ api/mraa/types.h         |   4 +-
+ include/arm/adlink_ipi.h |   3 +-
+ src/arm/adlink_ipi.c     | 400 ++++++++++++++++++++++++++++++++++++++-
+ src/arm/arm.c            |   6 +
+ 4 files changed, 405 insertions(+), 8 deletions(-)
 
 diff --git a/api/mraa/types.h b/api/mraa/types.h
-index ac14f265..ae8bf053 100644
+index a2adbc9..d1d36b5 100644
 --- a/api/mraa/types.h
 +++ b/api/mraa/types.h
-@@ -67,6 +67,7 @@ typedef enum {
+@@ -65,7 +65,7 @@ typedef enum {
+     MRAA_ROCKPI4 = 20,              /**< Radxa ROCK PI 4 Models A/B/C */
+     MRAA_ADLINK_IPI = 21,           /**< Adlink Industrial PI */
      MRAA_ADLINK_LEC_AL = 22,        /**< Adlink LEC-AL*/
-     MRAA_ADLINK_LEC_AL_AI = 23,        /**< Adlink LEC-AL*/
+-    MRAA_ADLINK_LEC_AL_AI = 23,        /**< Adlink LEC-AL*/
++    MRAA_ADLINK_LEC_AL_AI = 23,     /**< Adlink LEC-AL*/
      MRAA_UPXTREME = 24,             /**< The UPXTREME Board */
-+    MRAA_ADLINK_IPI_IMX8MP = 25,    /**<IPI SMARC plus imx8mp> */
+     MRAA_INTEL_ILK = 25,            /**< Intel Learning Kit */
+     MRAA_SIEMENS_IOT2050 = 26,      /**< Siemens IOT2050 board */
+@@ -78,7 +78,7 @@ typedef enum {
+     MRAA_RADXA_CM3 = 33,            /**< Radxa CM3 */
+     MRAA_RADXA_CM5_IO = 34,         /**< Radxa CM5 IO */
+     MRAA_RADXA_ROCK_3A = 35,        /**< Radxa ROCK 3 Model A */
+-
++    MRAA_ADLINK_IPI_IMX8MP = 36,    /**<IPI SMARC plus imx8mp> */
      // USB platform extenders start at 256
      MRAA_FTDI_FT4222 = 256,         /**< FTDI FT4222 USB to i2c bridge */
  
 diff --git a/include/arm/adlink_ipi.h b/include/arm/adlink_ipi.h
-index ab3e0776..4d9fa9bc 100755
+index ab3e077..8fdfd82 100755
 --- a/include/arm/adlink_ipi.h
 +++ b/include/arm/adlink_ipi.h
 @@ -17,7 +17,8 @@ extern "C" {
@@ -30,12 +46,12 @@ index ab3e0776..4d9fa9bc 100755
          mraa_adlink_ipi();
 -
 +mraa_board_t *
-+	mraa_adlink_ipi_imx8mp();
++        mraa_adlink_ipi_imx8mp();
  #ifdef __cplusplus
  }
  #endif
 diff --git a/src/arm/adlink_ipi.c b/src/arm/adlink_ipi.c
-index af6f105b..5a517f9a 100644
+index e1ba5fd..cd23a4d 100644
 --- a/src/arm/adlink_ipi.c
 +++ b/src/arm/adlink_ipi.c
 @@ -23,12 +23,15 @@
@@ -56,25 +72,44 @@ index af6f105b..5a517f9a 100644
  
  static const char* spilink[] = { "/sys/class/spidev/spidev0.0",
                            "/sys/class/spidev/spidev1.0" };
-@@ -37,7 +40,7 @@ static const char* i2clink[] = {
+@@ -36,6 +39,9 @@ static const char* spilink[] = { "/sys/class/spidev/spidev0.0",
+ static const char* i2clink[] = {
      "/sys/class/i2c-dev/i2c-0", "/sys/class/i2c-dev/i2c-1" };
  
- static const char* pwmlink[] = {
--    "/sys/class/pwm/pwmchip1", "/sys/class/pwm/pwmchip2" };
++static const char* pwmlink[] = {
 +    "/sys/class/pwm/pwmchip1", "/sys/class/pwm/pwmchip2", "/sys/class/pwm/pwmchip0" };
- 
++
  static unsigned char regIon[16]   = {0x2A, 0x2D, 0x30, 0x33, 0x36, 0x3B, 0x40, 0x45, 0x4A, 0x4D, 0x50, 0x53, 0x56, 0x5B, 0x60, 0x65};
  
-@@ -583,7 +586,7 @@ mraa_adlink_ipi()
-     strncpy(b->pins[28].name, "I2C0_SCL", MRAA_PIN_NAME_SIZE); // GPIO0_B0
-     b->pins[28].capabilities = (mraa_pincapabilities_t){ 1, 0, 0, 0, 0, 1, 0, 0 };
-     b->pins[28].gpio.pinmap = 8;
--
-+    
-     strncpy(b->pins[29].name, "EGPIO1_0", MRAA_PIN_NAME_SIZE); // Expander GPIO
-     b->pins[29].capabilities = (mraa_pincapabilities_t){ 1, 1, 1, 0, 0, 0, 0, 0 };
-     b->pins[29].gpio.pinmap = 496;
-@@ -724,3 +727,387 @@ mraa_adlink_ipi()
+ static unsigned int  IonValue[16]   = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
+@@ -83,7 +89,7 @@ static mraa_result_t pwm_write_replace(mraa_pwm_context dev, float duty)
+         unsigned char rx_tx_buf[3] = {0};
+ 
+ 	IonValue[dev->pin] = ((duty /_tperiod) * 255);
+-	
++
+         if(dev->pin < 9)
+         {
+                 if(_fd == -1)
+@@ -460,7 +466,7 @@ mraa_adlink_ipi()
+     strncpy(b->pins[2].name, "5V", MRAA_PIN_NAME_SIZE);
+     b->pins[2].capabilities = (mraa_pincapabilities_t){ 1, 0, 0, 0, 0, 0, 0, 0 };
+ 
+-    strncpy(b->pins[3].name, "I2C1_SDA", MRAA_PIN_NAME_SIZE); // GPIO0_C3 
++    strncpy(b->pins[3].name, "I2C1_SDA", MRAA_PIN_NAME_SIZE); // GPIO0_C3
+     b->pins[3].capabilities = (mraa_pincapabilities_t){ 1, 0, 0, 0, 0, 1, 0, 0 };
+     b->pins[3].gpio.pinmap = 19;
+ 
+@@ -545,7 +551,7 @@ mraa_adlink_ipi()
+     strncpy(b->pins[25].name, "GND", MRAA_PIN_NAME_SIZE);
+     b->pins[25].capabilities = (mraa_pincapabilities_t){ 1, 0, 0, 0, 0, 0, 0, 0 };
+ 
+-    strncpy(b->pins[26].name, "SPI0_CS1", MRAA_PIN_NAME_SIZE); // NC 
++    strncpy(b->pins[26].name, "SPI0_CS1", MRAA_PIN_NAME_SIZE); // NC
+     b->pins[26].capabilities = (mraa_pincapabilities_t){ 0, 0, 0, 0, 0, 0, 0, 0 };
+ 
+     strncpy(b->pins[27].name, "I2C0_SDA", MRAA_PIN_NAME_SIZE); // GPIO0_B1
+@@ -696,3 +702,387 @@ mraa_adlink_ipi()
  
      return b;
  }
@@ -194,7 +229,7 @@ index af6f105b..5a517f9a 100644
 +    strncpy(b->pins[2].name, "5V", MRAA_PIN_NAME_SIZE);
 +    b->pins[2].capabilities = (mraa_pincapabilities_t){ 1, 0, 0, 0, 0, 0, 0, 0 };
 +
-+    strncpy(b->pins[3].name, "I2C_GP_DAT", MRAA_PIN_NAME_SIZE); // GPIO0_C3 
++    strncpy(b->pins[3].name, "I2C_GP_DAT", MRAA_PIN_NAME_SIZE); // GPIO0_C3
 +    b->pins[3].capabilities = (mraa_pincapabilities_t){ 1, 0, 0, 0, 0, 1, 0, 0 };
 +    b->pins[3].gpio.pinmap = 145;
 +
@@ -279,7 +314,7 @@ index af6f105b..5a517f9a 100644
 +    strncpy(b->pins[25].name, "GND", MRAA_PIN_NAME_SIZE);
 +    b->pins[25].capabilities = (mraa_pincapabilities_t){ 1, 0, 0, 0, 0, 0, 0, 0 };
 +
-+    strncpy(b->pins[26].name, "SPI0_CS1", MRAA_PIN_NAME_SIZE); // NC 
++    strncpy(b->pins[26].name, "SPI0_CS1", MRAA_PIN_NAME_SIZE); // NC
 +    b->pins[26].capabilities = (mraa_pincapabilities_t){ 0, 0, 0, 0, 0, 0, 0, 0 };
 +
 +    strncpy(b->pins[27].name, "I2C_PM_DAT", MRAA_PIN_NAME_SIZE); // GPIO0_B1
@@ -289,7 +324,7 @@ index af6f105b..5a517f9a 100644
 +    strncpy(b->pins[28].name, "I2C_PM_SCL", MRAA_PIN_NAME_SIZE); // GPIO0_B0
 +    b->pins[28].capabilities = (mraa_pincapabilities_t){ 1, 0, 0, 0, 0, 1, 0, 0 };
 +    b->pins[28].gpio.pinmap = 142;
-+    
++
 +    strncpy(b->pins[29].name, "EGPIO1_0", MRAA_PIN_NAME_SIZE); // Expander GPIO
 +    b->pins[29].capabilities = (mraa_pincapabilities_t){ 1, 1, 1, 0, 0, 0, 0, 0 };
 +    b->pins[29].gpio.pinmap = 461;
@@ -412,7 +447,7 @@ index af6f105b..5a517f9a 100644
 +        b->spi_bus[b->spi_bus_count].sclk = 23;
 +        b->spi_bus_count++;
 +    }
-+    
++
 +    if (spi1 >= 0) {
 +        b->spi_bus[b->spi_bus_count].bus_id = spi0;
 +        b->spi_bus[b->spi_bus_count].slave_s = 0;
@@ -432,21 +467,21 @@ index af6f105b..5a517f9a 100644
 +        b->uart_dev[b->uart_dev_count].tx = 3;
 +        b->uart_dev_count++;
 +    }
-+    
++
 +    if (uart1 >= 0) {
 +        b->uart_dev[b->uart_dev_count].device_path = (char *)serialdev[uart1];
 +        b->uart_dev[b->uart_dev_count].rx = 10;
 +        b->uart_dev[b->uart_dev_count].tx = 8;
 +        b->uart_dev_count++;
 +    }
-+    
++
 +    if (uart2 >= 0) {
 +        b->uart_dev[b->uart_dev_count].device_path = (char *)serialdev[uart2];
 +        b->uart_dev[b->uart_dev_count].rx = 7;
 +        b->uart_dev[b->uart_dev_count].tx = 9;
 +        b->uart_dev_count++;
 +    }
-+ 
++
 +    if (uart3 >= 0) {
 +        b->uart_dev[b->uart_dev_count].device_path = (char *)serialdev[uart3];
 +        b->uart_dev[b->uart_dev_count].rx = 2;
@@ -463,28 +498,29 @@ index af6f105b..5a517f9a 100644
 +
 +}
 diff --git a/src/arm/arm.c b/src/arm/arm.c
-index a4c6bfc9..b5bd6a25 100644
+index d859e80..31e28a0 100644
 --- a/src/arm/arm.c
 +++ b/src/arm/arm.c
-@@ -99,6 +99,8 @@ mraa_arm_platform()
+@@ -124,6 +124,8 @@ mraa_arm_platform()
              platform_type = MRAA_RASPBERRY_PI;
          else if (mraa_file_contains("/proc/device-tree/model", "ADLINK ARM, LEC-PX30"))
              platform_type = MRAA_ADLINK_IPI;
-+	else if (mraa_file_contains("/proc/device-tree/model", "ADLINK LEC-iMX8MP SOM"))
-+		platform_type = MRAA_ADLINK_IPI_IMX8MP;
-     }
- 
-     switch (platform_type) {
-@@ -126,6 +128,9 @@ mraa_arm_platform()
- 	case MRAA_ADLINK_IPI:
- 	    plat = mraa_adlink_ipi();
- 	    break;
-+	case MRAA_ADLINK_IPI_IMX8MP:
-+	    plat = mraa_adlink_ipi_imx8mp();
-+	    break;
-         default:
-             plat = NULL;
-             syslog(LOG_ERR, "Unknown Platform, currently not supported by MRAA");
++        else if (mraa_file_contains("/proc/device-tree/model", "ADLINK ARM, LEC-iMX8MP SOM"))
++            platform_type = MRAA_ADLINK_IPI_IMX8MP;
+         else if (mraa_file_contains("/proc/device-tree/model", "SIMATIC IOT2050"))
+             platform_type = MRAA_SIEMENS_IOT2050;
+         else if (mraa_file_contains("/proc/device-tree/model", "Xunlong Orange Pi Prime"))
+@@ -175,6 +177,10 @@ mraa_arm_platform()
+             break;
+         case MRAA_ADLINK_IPI:
+             plat = mraa_adlink_ipi();
++            break;
++        case MRAA_ADLINK_IPI_IMX8MP:
++            plat = mraa_adlink_ipi_imx8mp();
++            break;
+         case MRAA_SIEMENS_IOT2050:
+             plat = mraa_siemens_iot2050();
+             break;
 -- 
-2.17.1
+2.25.1
 

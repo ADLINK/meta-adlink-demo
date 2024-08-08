@@ -1,11 +1,30 @@
-From 1bdffeb8141b9735fdb921e0ac5d85553479201f Mon Sep 17 00:00:00 2001
+From 29fe88f0d3ef6a8ee1fbc8d7a40c1c356cb9c0c2 Mon Sep 17 00:00:00 2001
 From: "gowtham.r" <gowtham.r@adlinktech.com>
 Date: Tue, 7 Jul 2020 15:25:03 +0000
 Subject: [PATCH 2/2] Added-Test-applications-support
 
+---
+ examples/c/CMakeLists.txt         |  16 +
+ examples/c/adlink_gpio.c          |  72 ++++
+ examples/c/adlink_gpio_advanced.c | 126 +++++++
+ examples/c/adlink_i2c.c           |  66 ++++
+ examples/c/adlink_mraa.c          |  22 ++
+ examples/c/adlink_pwm.c           |  71 ++++
+ examples/c/adlink_spi.c           |  66 ++++
+ examples/c/adlink_spi_eeprom.c    | 556 ++++++++++++++++++++++++++++++
+ examples/c/adlink_uart.c          |  47 +++
+ 9 files changed, 1042 insertions(+)
+ create mode 100644 examples/c/adlink_gpio.c
+ create mode 100644 examples/c/adlink_gpio_advanced.c
+ create mode 100644 examples/c/adlink_i2c.c
+ create mode 100644 examples/c/adlink_mraa.c
+ create mode 100644 examples/c/adlink_pwm.c
+ create mode 100644 examples/c/adlink_spi.c
+ create mode 100644 examples/c/adlink_spi_eeprom.c
+ create mode 100644 examples/c/adlink_uart.c
 
 diff --git a/examples/c/CMakeLists.txt b/examples/c/CMakeLists.txt
-index 0821810e..7d3b8fff 100644
+index 0821810..7d3b8ff 100644
 --- a/examples/c/CMakeLists.txt
 +++ b/examples/c/CMakeLists.txt
 @@ -9,6 +9,14 @@ add_executable(pwm pwm.c)
@@ -40,7 +59,7 @@ index 0821810e..7d3b8fff 100644
  endif()
 diff --git a/examples/c/adlink_gpio.c b/examples/c/adlink_gpio.c
 new file mode 100644
-index 00000000..60ea05da
+index 0000000..fac026e
 --- /dev/null
 +++ b/examples/c/adlink_gpio.c
 @@ -0,0 +1,72 @@
@@ -74,7 +93,7 @@ index 00000000..60ea05da
 +
 +	int gpio_pin;
 +	const char* board_name = mraa_get_platform_name();
-+	gpio_pin = atoi(argv[1]);		
++	gpio_pin = atoi(argv[1]);
 +	fprintf(stdout, "MRAA!!!\n Version: %s\n Running on %s\n", mraa_get_version(), board_name);
 +
 +	//GPIO
@@ -118,7 +137,7 @@ index 00000000..60ea05da
 +}
 diff --git a/examples/c/adlink_gpio_advanced.c b/examples/c/adlink_gpio_advanced.c
 new file mode 100644
-index 00000000..4ff886e3
+index 0000000..3b2d213
 --- /dev/null
 +++ b/examples/c/adlink_gpio_advanced.c
 @@ -0,0 +1,126 @@
@@ -200,7 +219,7 @@ index 00000000..4ff886e3
 +	}
 +    /* install signal handler */
 +    signal(SIGINT, sig_handler);
-+ 
++
 +    mraa_result_t status = MRAA_SUCCESS;
 +    mraa_gpio_context gpio;
 +
@@ -250,7 +269,7 @@ index 00000000..4ff886e3
 +}
 diff --git a/examples/c/adlink_i2c.c b/examples/c/adlink_i2c.c
 new file mode 100644
-index 00000000..cb066f55
+index 0000000..cb066f5
 --- /dev/null
 +++ b/examples/c/adlink_i2c.c
 @@ -0,0 +1,66 @@
@@ -322,7 +341,7 @@ index 00000000..cb066f55
 +}
 diff --git a/examples/c/adlink_mraa.c b/examples/c/adlink_mraa.c
 new file mode 100644
-index 00000000..8e6432c1
+index 0000000..8e6432c
 --- /dev/null
 +++ b/examples/c/adlink_mraa.c
 @@ -0,0 +1,22 @@
@@ -350,7 +369,7 @@ index 00000000..8e6432c1
 +}
 diff --git a/examples/c/adlink_pwm.c b/examples/c/adlink_pwm.c
 new file mode 100644
-index 00000000..d1b891ed
+index 0000000..d1b891e
 --- /dev/null
 +++ b/examples/c/adlink_pwm.c
 @@ -0,0 +1,71 @@
@@ -427,7 +446,7 @@ index 00000000..d1b891ed
 +}
 diff --git a/examples/c/adlink_spi.c b/examples/c/adlink_spi.c
 new file mode 100644
-index 00000000..281d5b0c
+index 0000000..281d5b0
 --- /dev/null
 +++ b/examples/c/adlink_spi.c
 @@ -0,0 +1,66 @@
@@ -499,7 +518,7 @@ index 00000000..281d5b0c
 +}
 diff --git a/examples/c/adlink_spi_eeprom.c b/examples/c/adlink_spi_eeprom.c
 new file mode 100644
-index 00000000..16751b3a
+index 0000000..20c0449
 --- /dev/null
 +++ b/examples/c/adlink_spi_eeprom.c
 @@ -0,0 +1,556 @@
@@ -691,7 +710,7 @@ index 00000000..16751b3a
 +  //spcDump("WriteDisable",rc,data,1);
 +}
 +
-+uint16_t W25Q64_read(uint32_t addr,uint8_t *buf,uint16_t n){ 
++uint16_t W25Q64_read(uint32_t addr,uint8_t *buf,uint16_t n){
 +  unsigned char *data;
 +  int rc;
 +
@@ -737,7 +756,7 @@ index 00000000..16751b3a
 +  data[2] = (addr>>8) & 0xff;
 +  data[3] = addr & 0xff;
 +  rc = wiringPiSPIDataRW (_spich,data,sizeof(data));
-+ 
++
 +  while(W25Q64_IsBusy() & flgwait) {
 +    sleep(1);
 +  }
@@ -758,7 +777,7 @@ index 00000000..16751b3a
 +  data[2] = (addr>>8) & 0xff;
 +  data[3] = addr & 0xff;
 +  rc = wiringPiSPIDataRW (_spich,data,sizeof(data));
-+ 
++
 +  while(W25Q64_IsBusy() & flgwait) {
 +    sleep(1);
 +  }
@@ -772,14 +791,14 @@ index 00000000..16751b3a
 +  uint32_t addr = blk_no;
 +  addr<<=15;
 +
-+  W25Q64_WriteEnable();  
++  W25Q64_WriteEnable();
 +
 +  data[0] = CMD_BLOCK_ERASE32KB;
 +  data[1] = (addr>>16) & 0xff;
 +  data[2] = (addr>>8) & 0xff;
 +  data[3] = addr & 0xff;
 +  rc = wiringPiSPIDataRW (_spich,data,sizeof(data));
-+ 
++
 +  while(W25Q64_IsBusy() & flgwait) {
 +    sleep(1);
 +  }
@@ -791,7 +810,7 @@ index 00000000..16751b3a
 +  int rc;
 +  UNUSED(rc);
 +
-+  W25Q64_WriteEnable();  
++  W25Q64_WriteEnable();
 +
 +  data[0] = CMD_CHIP_ERASE;
 +  rc = wiringPiSPIDataRW (_spich,data,sizeof(data));
@@ -811,8 +830,8 @@ index 00000000..16751b3a
 +  addr<<=12;
 +  addr += inaddr;
 +
-+  W25Q64_WriteEnable();  
-+  if (W25Q64_IsBusy()) return 0;  
++  W25Q64_WriteEnable();
++  if (W25Q64_IsBusy()) return 0;
 +
 +  data = (unsigned char*)malloc(n+4);
 +  data[0] = CMD_PAGE_PROGRAM;
@@ -836,7 +855,7 @@ index 00000000..16751b3a
 +  uint8_t total =0;
 +  uint32_t saddr =0;
 +  uint32_t eaddr =n-1;
-+  
++
 +  printf("---------------------------------------------------------------\n");
 +  uint16_t i;
 +  for(i = 1; i < n + 1; i++)
@@ -854,14 +873,14 @@ index 00000000..16751b3a
 +
 +
 +int main(int argc, char *argv[]) {
-+	uint8_t buf[256];  
++	uint8_t buf[256];
 +
 +	char *device;
 +	int speed, mode;
 +	int i, option;
 +	int sector, address, size;
 +
-+	uint16_t n;      
++	uint16_t n;
 +
 +	if(argc != 2)
 +	{
@@ -1018,7 +1037,7 @@ index 00000000..16751b3a
 +			printf("%d -> ", i);
 +			scanf("%x",&data);
 +			wdata[i]= data & 0xFF;
-+		}  
++		}
 +
 +		n = W25Q64_eraseSector(sector,true);
 +
@@ -1061,7 +1080,7 @@ index 00000000..16751b3a
 +}
 diff --git a/examples/c/adlink_uart.c b/examples/c/adlink_uart.c
 new file mode 100644
-index 00000000..4d03dac2
+index 0000000..4d03dac
 --- /dev/null
 +++ b/examples/c/adlink_uart.c
 @@ -0,0 +1,47 @@
@@ -1113,5 +1132,5 @@ index 00000000..4d03dac2
 +    return EXIT_FAILURE;
 +}
 -- 
-2.17.1
+2.25.1
 
