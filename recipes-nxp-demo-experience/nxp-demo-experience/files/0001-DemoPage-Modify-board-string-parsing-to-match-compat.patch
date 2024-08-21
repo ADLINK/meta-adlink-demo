@@ -1,0 +1,27 @@
+From b4909303f1e6a1bb736fd00aa4a673fb1b8ac8c7 Mon Sep 17 00:00:00 2001
+From: "po.cheng" <po.cheng@adlinktech.com>
+Date: Wed, 21 Aug 2024 08:42:40 +0800
+Subject: [PATCH 1/2] DemoPage: Modify board string parsing to match compatible
+ name in demos.json
+
+Signed-off-by: po.cheng <po.cheng@adlinktech.com>
+---
+ engine/DemoPage.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/engine/DemoPage.cpp b/engine/DemoPage.cpp
+index 215c3d7..b7a0392 100644
+--- a/engine/DemoPage.cpp
++++ b/engine/DemoPage.cpp
+@@ -122,7 +122,7 @@ void DemoPage::loadJsonData()
+     if (!board.contains("imx"))
+         board = "imx7ulpevk";
+     if (board.contains("-"))
+-        board = board.split("-")[0];
++        board = board.split("-")[0].startsWith("imx") ? board.split("-")[0] : board.split("-")[1];
+     else if (board.endsWith("evk"))
+         board = board.remove("evk");
+     jsonFile.setFileName(DEMOPATH + "/demos.json");
+-- 
+2.25.1
+
