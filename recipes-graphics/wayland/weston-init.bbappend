@@ -1,5 +1,7 @@
 # Add background setting to [shell] section and update chromium launcher
 
+WESTON_BACKGROUND_IMAGE ?= "adlink.jpg"
+
 update_file() {
     if ! grep -q "$1" $3; then
         bbfatal $1 not found in $3
@@ -9,7 +11,7 @@ update_file() {
 
 update_background() {
 	bbnote "Replace $1 to $2 in $3"
-	update_file "\[shell\]" "\[shell\]\nbackground-image=/usr/share/weston/adlink.jpg\nbackground-type=scale" ${D}${sysconfdir}/xdg/weston/weston.ini
+	update_file "\[shell\]" "\[shell\]\nbackground-image=/usr/share/weston/${WESTON_BACKGROUND_IMAGE}\nbackground-type=scale" ${D}${sysconfdir}/xdg/weston/weston.ini
 }
 
 update_chromium_launcher() {

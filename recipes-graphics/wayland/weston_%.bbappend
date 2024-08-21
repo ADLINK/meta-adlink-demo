@@ -1,14 +1,11 @@
-SUMMARY= "Weston, a Wayland compositor"
-DESCRIPTION= "Include ADLINK wallpaper .jpg image to replace weston desktop wallpaper"
-LICENSE= "CLOSED"
-
 FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 
-SRC_URI += "file://adlink.jpg"
+WESTON_BACKGROUND_IMAGE ?= "adlink.jpg"
+
+SRC_URI += "file://${WESTON_BACKGROUND_IMAGE}"
 
 do_install:append() {
-
-   install ${WORKDIR}/adlink.jpg ${D}${datadir}/weston
+   install ${WORKDIR}/${WESTON_BACKGROUND_IMAGE} ${D}${datadir}/weston
 }
 
 FILES:${PN} += "${datadir/weston}"
