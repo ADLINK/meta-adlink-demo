@@ -1,4 +1,4 @@
-
+#!/bin/sh
 
 #Set system time from RTC
 hwclock -s

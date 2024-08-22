@@ -1,0 +1,4 @@
+#!/bin/sh
+
+#Set DIO0~3 to low
+for idx in 0 1 2 3; do gpioset -t0 DI$idx=0; gpioset -t0 DO$idx=0; done

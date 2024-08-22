@@ -8,8 +8,7 @@ DEPENDS += " \
 
 SRC_URI = "\
     file://adlink-startup.service \
-    file://adlink-startup-intel \
-    file://adlink-startup-imx8 \
+    file://${MACHINE}-startup \
 "
 
 inherit pkgconfig systemd update-rc.d useradd
@@ -28,12 +27,7 @@ USERADD_PARAM:${PN} = "--system -M -d /var/lib/adlink -s /bin/false -g root root
 do_install() {
   if ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'true', 'false', d)}; then
     install -d "${D}${sbindir}"
-    if ${@bb.utils.contains('MACHINE', 'intel-corei7-64', 'true', 'false', d)}; then
-      install -m 0755 ${WORKDIR}/adlink-startup-intel ${D}${sbindir}/${INITSCRIPT_NAME}
-    fi
-    if ${@bb.utils.contains_any('MACHINE', 'lec-imx8m lec-imx8mp lec-imx8mm', 'true', 'false', d)}; then
-      install -m 0755 ${WORKDIR}/adlink-startup-imx8 ${D}${sbindir}/${INITSCRIPT_NAME}
-    fi
+    install -m 0755 ${WORKDIR}/${MACHINE}-startup ${D}${sbindir}/${INITSCRIPT_NAME}
     install -d "${D}${systemd_unitdir}/system"
     install -m 0644 "${WORKDIR}/adlink-startup.service" "${D}${systemd_unitdir}/system/adlink-startup.service"
     #enable the service
@@ -41,12 +35,7 @@ do_install() {
     ln -sf ${systemd_unitdir}/system/adlink-startup.service ${D}${sysconfdir}/systemd/system/multi-user.target.wants/adlink-startup.service
   else
     install -d "${D}${sysconfdir}/init.d"
-    if ${@bb.utils.contains('MACHINE', 'intel-corei7-64', 'true', 'false', d)}; then
-      install -m 0755 ${WORKDIR}/adlink-startup-intel ${D}${sysconfdir}/init.d/${INITSCRIPT_NAME}
-    fi
-    if ${@bb.utils.contains_any('MACHINE', 'lec-imx8m lec-imx8mp lec-imx8mm', 'true', 'false', d)}; then
-      install -m 0755 ${WORKDIR}/adlink-startup-imx8 ${D}${sysconfdir}/init.d/${INITSCRIPT_NAME}
-    fi
+    install -m 0755 ${WORKDIR}/${MACHINE}-startup ${D}${sysconfdir}/init.d/${INITSCRIPT_NAME}
   fi
 }
 
