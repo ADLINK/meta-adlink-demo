@@ -1,0 +1,70 @@
+From 5b3bbe7f47fb2983adbdc07105226c61ec245952 Mon Sep 17 00:00:00 2001
+From: "po.cheng" <po.cheng@adlinktech.com>
+Date: Tue, 3 Sep 2024 15:39:50 +0800
+Subject: [PATCH] rtl8853bu: modify for arm64 kernel module build
+
+Signed-off-by: po.cheng <po.cheng@adlinktech.com>
+---
+ Makefile              |  5 ++++-
+ platform/arm64_nxp.mk | 19 +++++++++++++++++++
+ 2 files changed, 23 insertions(+), 1 deletion(-)
+ create mode 100644 platform/arm64_nxp.mk
+
+diff --git a/Makefile b/Makefile
+index b6c5940..6a32e11 100644
+--- a/Makefile
++++ b/Makefile
+@@ -229,7 +229,7 @@ CONFIG_LAYER2_ROAMING = y
+ CONFIG_ROAMING_FLAG = 0x3
+ 
+ ###################### Platform Related #######################
+-CONFIG_PLATFORM_I386_PC = y
++CONFIG_PLATFORM_I386_PC = n
+ CONFIG_PLATFORM_RTL8198D = n
+ CONFIG_PLATFORM_ANDROID_X86 = n
+ CONFIG_PLATFORM_ANDROID_INTEL_X86 = n
+@@ -242,6 +242,7 @@ CONFIG_PLATFORM_AML_S905 = n
+ CONFIG_PLATFORM_AML_S905_L3A = n
+ CONFIG_PLATFORM_HUANGLONG = n
+ CONFIG_PLATFORM_ARM_ROCKCHIP = n
++CONFIG_PLATFORM_ARM64_NXP = y
+ 
+ ########### CUSTOMER ################################
+ 
+@@ -840,6 +841,8 @@ modules:
+ #	$(CC_STRIP) --strip-unneeded ${OUT_DIR}/$(M)/$(MODULE_NAME).ko
+ #	cp Module.symvers .symvers.$(MODULE_NAME)
+ 
++build: all
++
+ strip:
+ 	$(CC_STRIP) $(MODULE_NAME).ko --strip-unneeded
+ 
+diff --git a/platform/arm64_nxp.mk b/platform/arm64_nxp.mk
+new file mode 100644
+index 0000000..6fcbd9f
+--- /dev/null
++++ b/platform/arm64_nxp.mk
+@@ -0,0 +1,19 @@
++ifeq ($(CONFIG_PLATFORM_ARM64_NXP), y)
++EXTRA_CFLAGS += -DCONFIG_LITTLE_ENDIAN
++EXTRA_CFLAGS += -DCONFIG_IOCTL_CFG80211 -DRTW_USE_CFG80211_STA_EVENT
++EXTRA_CFLAGS += -DCONFIG_RADIO_WORK
++EXTRA_CFLAGS += -DCONFIG_CONCURRENT_MODE
++
++ARCH ?= arm64
++CROSS_COMPILE ?= gcc-linaro-6.3.1-2017.02-x86_64_aarch64-linux-gnu/bin/aarch64-linux-gnu-
++KSRC := $(KERNEL_SRC)
++
++#Add by amlogic
++EXTRA_CFLAGS += -w -Wno-return-type
++EXTRA_CFLAGS += $(foreach d,$(shell test -d $(KERNEL_SRC)/$(M) && find $(shell cd $(KERNEL_SRC)/$(M);pwd) -type d),$(shell echo " -I$(d)"))
++
++
++
++_PLATFORM_FILES += platform/platform_ops.o
++OBJS += $(_PLATFORM_FILES)
++endif
+-- 
+2.25.1
+
