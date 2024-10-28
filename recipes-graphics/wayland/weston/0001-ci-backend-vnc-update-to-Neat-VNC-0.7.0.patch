@@ -1,0 +1,53 @@
+From 4e45ee972ba5882d62d440de3988698d471f3950 Mon Sep 17 00:00:00 2001
+From: "po.cheng" <po.cheng@adlinktech.com>
+Date: Mon, 28 Oct 2024 16:00:28 +0800
+Subject: [PATCH] ci, backend-vnc: update to Neat VNC 0.7.0 (cherrypick from
+ 8895b15f3dfc555a869e310ff6e16ff5dced1336)
+
+Signed-off-by: po.cheng <po.cheng@adlinktech.com>
+---
+ libweston/backend-vnc/meson.build |  2 +-
+ libweston/backend-vnc/vnc.c       | 14 +++++++++++---
+ 2 files changed, 12 insertions(+), 4 deletions(-)
+
+diff --git a/libweston/backend-vnc/meson.build b/libweston/backend-vnc/meson.build
+index a5706356..b7b69165 100644
+--- a/libweston/backend-vnc/meson.build
++++ b/libweston/backend-vnc/meson.build
+@@ -3,7 +3,7 @@ if not get_option('backend-vnc')
+ endif
+ 
+ config_h.set('BUILD_VNC_COMPOSITOR', '1')
+-dep_neatvnc = dependency('neatvnc', version: ['>= 0.6.0', '< 0.7.0'], required: false, fallback: ['neatvnc', 'neatvnc_dep'])
++dep_neatvnc = dependency('neatvnc', version: ['>= 0.7.0', '< 0.8.0'], required: false, fallback: ['neatvnc', 'neatvnc_dep'])
+ if not dep_neatvnc.found()
+ 	error('VNC backend requires neatvnc which was not found. Or, you can use \'-Dbackend-vnc=false\'.')
+ endif
+diff --git a/libweston/backend-vnc/vnc.c b/libweston/backend-vnc/vnc.c
+index 7fd99163..1561bc5c 100644
+--- a/libweston/backend-vnc/vnc.c
++++ b/libweston/backend-vnc/vnc.c
+@@ -1077,9 +1077,17 @@ vnc_backend_create(struct weston_compositor *compositor,
+ 		goto err_output;
+ 	}
+ 
+-	ret = nvnc_enable_auth(backend->server, config->server_key,
+-			       config->server_cert, vnc_handle_auth,
+-			       NULL);
++	ret = nvnc_set_tls_creds(backend->server, config->server_key,
++				config->server_cert);
++	if (ret) {
++		weston_log("Failed set TLS credentials\n");
++		goto err_output;
++	}
++
++	ret = nvnc_enable_auth(backend->server, NVNC_AUTH_REQUIRE_AUTH |
++				NVNC_AUTH_REQUIRE_ENCRYPTION, vnc_handle_auth,
++				NULL);
++
+ 	if (ret) {
+ 		weston_log("Failed to enable TLS support\n");
+ 		goto err_output;
+-- 
+2.25.1
+
