@@ -1,0 +1,15 @@
+[Unit]
+Description=Add samba user using smbpasswd
+DefaultDependencies=no
+After=smb.service
+
+[Service]
+Type=oneshot
+ExecStart=/bin/sh -c '#SBINDIR#/smb-user'
+ExecStartPost=#BASE_BINDIR#/systemctl --no-reload disable smb-user.service
+RemainAfterExit=yes
+TimeoutSec=0
+
+[Install]
+WantedBy=multi-user.target
+

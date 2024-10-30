@@ -1,0 +1,6 @@
+#!/bin/bash
+
+if ! pdbedit -L | grep -q #SAMBA_USERNAME#; then
+	echo -e "#SAMBA_PASSWORD#\n#SAMBA_PASSWORD#\n" | smbpasswd -s -a #SAMBA_USERNAME#
+fi
+
