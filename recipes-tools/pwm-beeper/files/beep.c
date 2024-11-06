@@ -13,7 +13,7 @@ int main(int argc, char *argv[])
 	struct input_event event;
 
 	if (argc == 1) {
-		printf("Usage: beep </dev/input/eventX> [freq] [duration]");
+		printf("Usage: beep </dev/input/eventX> [freq/Hz] [duration/uSec]");
 		return 1;
 	}
 	if ((fd = open(argv[1], O_RDWR)) < 0) {
@@ -30,7 +30,7 @@ int main(int argc, char *argv[])
 		event.value = atoi(argv[2]);
 		duration = atoi(argv[3]);
 	} else {
-		printf("Usage: beep </dev/input/eventX> [freq] [duration]");
+		printf("Usage: beep </dev/input/eventX> [freq/Hz] [duration/uSec]");
 		return 1;
 	}
 	event.type = EV_SND;
@@ -39,7 +39,7 @@ int main(int argc, char *argv[])
 	printf("Open %s with SND_TONE %d for %d seconds\n", argv[1], event.value, duration);
 	ret = write(fd, &event, sizeof(struct input_event));
 	printf("ret = %d\n", ret);
-	sleep(duration);
+	usleep(duration);
 	event.value = 0;
 	ret = write(fd, &event, sizeof(struct input_event));
 	printf("ret = %d\n", ret);
