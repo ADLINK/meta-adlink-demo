@@ -1,4 +1,4 @@
-From 29fe88f0d3ef6a8ee1fbc8d7a40c1c356cb9c0c2 Mon Sep 17 00:00:00 2001
+From c2a0e8779b66a14fa6c8959172165ac2370b351f Mon Sep 17 00:00:00 2001
 From: "gowtham.r" <gowtham.r@adlinktech.com>
 Date: Tue, 7 Jul 2020 15:25:03 +0000
 Subject: [PATCH 2/2] Added-Test-applications-support
@@ -59,7 +59,7 @@ index 0821810..7d3b8ff 100644
  endif()
 diff --git a/examples/c/adlink_gpio.c b/examples/c/adlink_gpio.c
 new file mode 100644
-index 0000000..fac026e
+index 0000000..60ea05d
 --- /dev/null
 +++ b/examples/c/adlink_gpio.c
 @@ -0,0 +1,72 @@
@@ -93,7 +93,7 @@ index 0000000..fac026e
 +
 +	int gpio_pin;
 +	const char* board_name = mraa_get_platform_name();
-+	gpio_pin = atoi(argv[1]);
++	gpio_pin = atoi(argv[1]);		
 +	fprintf(stdout, "MRAA!!!\n Version: %s\n Running on %s\n", mraa_get_version(), board_name);
 +
 +	//GPIO
@@ -137,7 +137,7 @@ index 0000000..fac026e
 +}
 diff --git a/examples/c/adlink_gpio_advanced.c b/examples/c/adlink_gpio_advanced.c
 new file mode 100644
-index 0000000..3b2d213
+index 0000000..4ff886e
 --- /dev/null
 +++ b/examples/c/adlink_gpio_advanced.c
 @@ -0,0 +1,126 @@
@@ -219,7 +219,7 @@ index 0000000..3b2d213
 +	}
 +    /* install signal handler */
 +    signal(SIGINT, sig_handler);
-+
++ 
 +    mraa_result_t status = MRAA_SUCCESS;
 +    mraa_gpio_context gpio;
 +
@@ -518,7 +518,7 @@ index 0000000..281d5b0
 +}
 diff --git a/examples/c/adlink_spi_eeprom.c b/examples/c/adlink_spi_eeprom.c
 new file mode 100644
-index 0000000..20c0449
+index 0000000..16751b3
 --- /dev/null
 +++ b/examples/c/adlink_spi_eeprom.c
 @@ -0,0 +1,556 @@
@@ -710,7 +710,7 @@ index 0000000..20c0449
 +  //spcDump("WriteDisable",rc,data,1);
 +}
 +
-+uint16_t W25Q64_read(uint32_t addr,uint8_t *buf,uint16_t n){
++uint16_t W25Q64_read(uint32_t addr,uint8_t *buf,uint16_t n){ 
 +  unsigned char *data;
 +  int rc;
 +
@@ -756,7 +756,7 @@ index 0000000..20c0449
 +  data[2] = (addr>>8) & 0xff;
 +  data[3] = addr & 0xff;
 +  rc = wiringPiSPIDataRW (_spich,data,sizeof(data));
-+
++ 
 +  while(W25Q64_IsBusy() & flgwait) {
 +    sleep(1);
 +  }
@@ -777,7 +777,7 @@ index 0000000..20c0449
 +  data[2] = (addr>>8) & 0xff;
 +  data[3] = addr & 0xff;
 +  rc = wiringPiSPIDataRW (_spich,data,sizeof(data));
-+
++ 
 +  while(W25Q64_IsBusy() & flgwait) {
 +    sleep(1);
 +  }
@@ -791,14 +791,14 @@ index 0000000..20c0449
 +  uint32_t addr = blk_no;
 +  addr<<=15;
 +
-+  W25Q64_WriteEnable();
++  W25Q64_WriteEnable();  
 +
 +  data[0] = CMD_BLOCK_ERASE32KB;
 +  data[1] = (addr>>16) & 0xff;
 +  data[2] = (addr>>8) & 0xff;
 +  data[3] = addr & 0xff;
 +  rc = wiringPiSPIDataRW (_spich,data,sizeof(data));
-+
++ 
 +  while(W25Q64_IsBusy() & flgwait) {
 +    sleep(1);
 +  }
@@ -810,7 +810,7 @@ index 0000000..20c0449
 +  int rc;
 +  UNUSED(rc);
 +
-+  W25Q64_WriteEnable();
++  W25Q64_WriteEnable();  
 +
 +  data[0] = CMD_CHIP_ERASE;
 +  rc = wiringPiSPIDataRW (_spich,data,sizeof(data));
@@ -830,8 +830,8 @@ index 0000000..20c0449
 +  addr<<=12;
 +  addr += inaddr;
 +
-+  W25Q64_WriteEnable();
-+  if (W25Q64_IsBusy()) return 0;
++  W25Q64_WriteEnable();  
++  if (W25Q64_IsBusy()) return 0;  
 +
 +  data = (unsigned char*)malloc(n+4);
 +  data[0] = CMD_PAGE_PROGRAM;
@@ -855,7 +855,7 @@ index 0000000..20c0449
 +  uint8_t total =0;
 +  uint32_t saddr =0;
 +  uint32_t eaddr =n-1;
-+
++  
 +  printf("---------------------------------------------------------------\n");
 +  uint16_t i;
 +  for(i = 1; i < n + 1; i++)
@@ -873,14 +873,14 @@ index 0000000..20c0449
 +
 +
 +int main(int argc, char *argv[]) {
-+	uint8_t buf[256];
++	uint8_t buf[256];  
 +
 +	char *device;
 +	int speed, mode;
 +	int i, option;
 +	int sector, address, size;
 +
-+	uint16_t n;
++	uint16_t n;      
 +
 +	if(argc != 2)
 +	{
@@ -1037,7 +1037,7 @@ index 0000000..20c0449
 +			printf("%d -> ", i);
 +			scanf("%x",&data);
 +			wdata[i]= data & 0xFF;
-+		}
++		}  
 +
 +		n = W25Q64_eraseSector(sector,true);
 +
