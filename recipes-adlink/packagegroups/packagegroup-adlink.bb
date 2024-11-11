@@ -120,18 +120,15 @@ RDEPENDS:packagegroup-adlink-bluetooth = " \
 #
 # packages added by adlink tools
 #
+PKG_MRAA ?= "mraa mraa-dev mraa-doc mraa-utils python3-mraa"
 PKG_TPM := "${@'packagegroup-security-tpm2' if 'meta-tpm' in d.getVar('BBLAYERS') else ''}"
 PKG_SEMA := "${@'sema' if 'meta-adlink-sema' in d.getVar('BBLAYERS') else ''}"
 SUMMARY:packagegroup-adlink-tools = "Adlink Tools Support"
 RDEPENDS:packagegroup-adlink-tools = " \
-    mraa \
-    mraa-dev \
-    mraa-doc \
-    mraa-utils \
     upm \
     upm-dev \
     python3-upm \
-    python3-mraa \
+    ${PKG_MRAA} \
     ${PKG_SEMA} \
     ${PKG_TPM} \
 "
