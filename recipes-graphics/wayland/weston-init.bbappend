@@ -14,12 +14,13 @@ update_background() {
 	update_file "\[shell\]" "\[shell\]\nbackground-image=/usr/share/weston/${WESTON_BACKGROUND_IMAGE}\nbackground-type=scale" ${D}${sysconfdir}/xdg/weston/weston.ini
 }
 
-update_kiosk_shell() {
-    # FIXME: weston should be run as weston, not as root
+update_weston_owner() {
+    # weston should be run as weston, not as root
     update_file "User=root" "User=weston" ${D}${systemd_system_unitdir}/weston.service
     update_file "Group=root" "Group=weston" ${D}${systemd_system_unitdir}/weston.service
-    # set weston.ini to kiosk mode. FIXME: weston-keyboard won't work in kiosk-shell
-    update_file "\[core\]" "\[core\]\n#shell=kiosk-shell.so" ${D}${sysconfdir}/xdg/weston/weston.ini
+}
+
+update_virtual_keyboard() {
     # setup virtual keyboard
     echo "\n[input-method]" >> ${D}${sysconfdir}/xdg/weston/weston.ini
     echo "path=/usr/libexec/weston-keyboard" >> ${D}${sysconfdir}/xdg/weston/weston.ini
@@ -29,7 +30,14 @@ update_kiosk_shell() {
     echo "vt-switching=true" >> ${D}${sysconfdir}/xdg/weston/weston.ini
 }
 
+update_kiosk_shell() {
+    # set weston.ini to kiosk mode. FIXME: weston-keyboard won't work in kiosk-shell
+    update_file "\[core\]" "\[core\]\n#shell=kiosk-shell.so" ${D}${sysconfdir}/xdg/weston/weston.ini
+}
+
 do_install:append() {
+	update_weston_owner
+	update_virtual_keyboard
 	case "${MACHINE}" in
 	lec-*)
 		update_background
