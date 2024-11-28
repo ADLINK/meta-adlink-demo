@@ -9,7 +9,8 @@ BROWSER_SERVICEFILE = "${@bb.utils.contains('IMAGE_FEATURES', 'kiosk-mode', 'fil
 
 SRC_URI += "${BROWSER_SERVICEFILE}"
 
-CHROMIUM_EXTRA_ARGS:append = "${@bb.utils.contains('IMAGE_FEATURES', 'kiosk-mode', ' --enable-wayland-ime', '', d)}"
+# enable wayland virtual keyboard in chromium
+CHROMIUM_EXTRA_ARGS:append = " --enable-wayland-ime"
 CHROMIUM_EXTRA_ARGS:remove = "${@bb.utils.contains('IMAGE_FEATURES', 'kiosk-mode', '--incognito', '', d)}"
 
 do_install:append () {
