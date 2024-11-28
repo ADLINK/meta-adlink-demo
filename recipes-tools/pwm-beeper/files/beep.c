@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
 	}
 	if (argc == 2) {
 		event.value = 1000;
-		duration = 3;
+		duration = 3000000;
 	} else if (argc == 3) {
 		event.value = atoi(argv[2]);
 		duration = 3;
@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
 	event.type = EV_SND;
 	event.code = SND_TONE;
 
-	printf("Open %s with SND_TONE %d for %d seconds\n", argv[1], event.value, duration);
+	printf("Open %s with SND_TONE %d for %d uSec\n", argv[1], event.value, duration);
 	ret = write(fd, &event, sizeof(struct input_event));
 	printf("ret = %d\n", ret);
 	usleep(duration);
