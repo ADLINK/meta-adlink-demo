@@ -9,6 +9,10 @@ do_install:append () {
     install -m 0644 ${WORKDIR}/wlan0.rpi3 ${D}${sysconfdir}/systemd/network/50-wlan0.network
     install -m 0644 ${WORKDIR}/veth.rpi3 ${D}${sysconfdir}/systemd/network/50-veth.network
   fi
+  if [ "${MACHINE}" = "sp2-imx8mp" -a ${WIFI_IFNAME} = "wlan0" ]; then
+    install -d ${D}${sysconfdir}/systemd/network
+    install -m 0644 ${WORKDIR}/wlan0.rpi3 ${D}${sysconfdir}/systemd/network/50-wlan0.network
+  fi
 }
 
 FILES:${PN} += "${sysconfdir}/systemd/network"
