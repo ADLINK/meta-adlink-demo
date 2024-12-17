@@ -1,10 +1,11 @@
 [Unit]
 Description=RFKill-Unblock All Devices
-After=network.target
+Requires=systemd-rfkill.service connman.service network.target
+After=systemd-rfkill.service connman.service network.target
 
 [Service]
 Type=oneshot
-ExecStart=/usr/sbin/rfkill unblock all
+ExecStart=sh -c 'connmanctl enable wifi; rfkill unblock all'
 
 [Install]
 WantedBy=multi-user.target
