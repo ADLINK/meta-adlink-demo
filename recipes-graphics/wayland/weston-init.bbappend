@@ -9,6 +9,8 @@ CERT_CITY ?= "Guishan"
 CERT_NAME ?= "*.adlinktech.com"
 CERT_CORP ?= "adlink"
 
+ROTATE_DESKTOP_ANGLE ?= "0"
+
 DEPENDS:append = " openssl-native"
 
 update_file() {
@@ -49,6 +51,16 @@ update_kiosk_shell() {
     update_file "\[core\]" "\[core\]\n#shell=kiosk-shell.so" ${D}${sysconfdir}/xdg/weston/weston.ini
 }
 
+update_output_rotation() {
+	# rotate desktop by 180 on LVDS panel
+	if [ ${ROTATE_DESKTOP_ANGLE} -eq 180 ]; then
+		echo "\n[output]" >> ${D}${sysconfdir}/xdg/weston/weston.ini
+		echo "name=LVDS-1" >> ${D}${sysconfdir}/xdg/weston/weston.ini
+		echo "mode=1280x800@60" >> ${D}${sysconfdir}/xdg/weston/weston.ini
+		echo "transform=rotate-180" >> ${D}${sysconfdir}/xdg/weston/weston.ini
+	fi
+}
+
 do_gen_key() {
     mkdir -p ${B}/CA/private/
     cd ${B}/CA/
@@ -86,6 +98,9 @@ do_install:append() {
 		install -m 0644 ${B}/CA/${REMOTE_PKI_KEYNAME}.crt ${D}${sysconfdir}/remote-desktop/keys/
 		;;
 	esac
+	if [ ${ROTATE_DESKTOP_ANGLE} -eq 180 ]; then
+		update_output_rotation
+	fi
 }
 
 FILES:${PN} += "${sysconfdir}/remote-desktop/keys"

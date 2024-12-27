@@ -5,6 +5,8 @@ SRC_URI += " \
 	file://psplash-bar-img.png \
 "
 
+ROTATE_PSPLASH_ANGLE ?= "0"
+
 # NB: this is only for the main logo image; if you add multiple images here,
 #     poky will build multiple psplash packages with 'outsuffix' in name for
 #     each of these ...
@@ -19,5 +21,13 @@ do_configure:append () {
 	# for anyone updating the assets
 	cp ${WORKDIR}/psplash-bar-img.png ${S}/psplash-bar.png
 	${S}/make-image-header.sh ${S}/psplash-bar.png BAR
+}
+
+# rotate the psplash
+# ExecStart=/bin/sh -c "s=$(/usr/sbin/fbset -i -fb /dev/fb0 | grep epdc); if [ -z "$s" ]; then i=0; else i=1; fi; if [ -e /dev/fb$i ]; then /usr/bin/psplash -a 180 -n -f $i; fi"
+do_install:append () {
+	if [ ${ROTATE_PSPLASH_ANGLE} -eq 180 ]; then
+		sed -E "s|/usr/bin/psplash -n -f|/usr/bin/psplash -a 180 -n -f|g" -i ${D}/${systemd_system_unitdir}/psplash-start.service
+	fi
 }
 
