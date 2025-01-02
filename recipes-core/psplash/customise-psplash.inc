@@ -31,3 +31,5 @@ do_install:append () {
 	fi
 }
 
+SYSTEMD_AUTO_ENABLE = "${@bb.utils.contains('IMAGE_FEATURES', 'resize', 'disable', 'enable', d)}"
+
