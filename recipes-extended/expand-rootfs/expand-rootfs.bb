@@ -39,7 +39,7 @@ if systemctl >/dev/null 2>/dev/null; then
 	NOTIFICATION="/usr/share/adlink/standby.png"
 	export DISPLAY=:0
 	# show standby notificationn image
-	fbi -1 -noverbose ${NOTIFICATION}
+	fbi -1 -noverbose ${NOTIFICATION} < /dev/zero &
 	# grow rootfs partition
 	echo 'Resizing rootfs partition on running storage at first boot.....'
 	growpart "${MMC_DEV}" "${PART_ENTRY_NUMBER}"
