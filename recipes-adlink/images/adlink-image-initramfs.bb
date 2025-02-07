@@ -10,7 +10,7 @@ LICENSE = "MIT"
 
 IMAGE_FSTYPES = "${INITRAMFS_FSTYPES}"
 
-include ${@bb.utils.contains('IMAGE_FEATURES', 'fastboot', 'initramfs-plymouth-fastboot.inc', 'initramfs-minimal.inc', d)}
+include ${@bb.utils.contains('IMAGE_FEATURES', 'fastboot psplash', 'initramfs-plymouth-fastboot.inc', 'initramfs-minimal.inc', d)}
 
 IMAGE_ROOTFS_SIZE = "8192"
 NO_RECOMMENDATIONS = "1"
