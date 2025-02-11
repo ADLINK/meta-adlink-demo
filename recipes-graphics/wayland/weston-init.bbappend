@@ -23,6 +23,7 @@ update_file() {
 
 update_background() {
 	update_file "\[shell\]" "\[shell\]\nbackground-image=/usr/share/weston/${WESTON_BACKGROUND_IMAGE}\nbackground-type=scale" ${D}${sysconfdir}/xdg/weston/weston.ini
+	update_file "#\[shell\]" "\[shell\]" ${D}${sysconfdir}/xdg/weston/weston.ini
 }
 
 update_weston_owner() {
