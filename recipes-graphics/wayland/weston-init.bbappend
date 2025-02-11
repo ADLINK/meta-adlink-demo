@@ -50,6 +50,8 @@ update_virtual_keyboard() {
 update_kiosk_shell() {
     # set weston.ini to kiosk mode. FIXME: weston-keyboard won't work in kiosk-shell
     update_file "\[core\]" "\[core\]\n#shell=kiosk-shell.so" ${D}${sysconfdir}/xdg/weston/weston.ini
+    update_file "\[shell\]" "\[shell\]\npanel-position=none" ${D}${sysconfdir}/xdg/weston/weston.ini
+    update_file "#\[shell\]" "\[shell\]" ${D}${sysconfdir}/xdg/weston/weston.ini
 }
 
 update_output_rotation() {
