@@ -16,7 +16,8 @@ S = "${WORKDIR}/git"
 DEPENDS += "libusb1"
 RDEPENDS:${PN} += "libusb1"
 
-EXTRA_OEMAKE = "'CC=${CC} -DPRODUCT_ID_STR=2514' 'INC=${STAGING_INCDIR}/libusb-1.0'"
+PRODUCT_ID_FLAG ?= "-DPRODUCT_ID_STR=2514"
+EXTRA_OEMAKE = "'CC=${CC} ${PRODUCT_ID_FLAG}' 'INC=${STAGING_INCDIR}/libusb-1.0'"
 TARGET_CC_ARCH += "${LDFLAGS}"
 
 do_compile:prepend() {

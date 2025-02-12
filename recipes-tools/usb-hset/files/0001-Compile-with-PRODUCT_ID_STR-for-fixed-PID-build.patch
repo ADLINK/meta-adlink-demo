@@ -1,27 +1,28 @@
-From 7cc0d57f3f59524a15ee587b2f2c91d0ebe4c9e8 Mon Sep 17 00:00:00 2001
+From 1ee81f74c83e1036fd82bc956e6fef989bd28412 Mon Sep 17 00:00:00 2001
 From: "po.cheng" <po.cheng@adlinktech.com>
-Date: Tue, 3 Oct 2023 13:52:50 +0800
-Subject: [PATCH] Compile with PRODUCT_ID_STR for fixed PID build
+Date: Wed, 12 Feb 2025 10:15:27 +0800
+Subject: [PATCH] [PATCH] Compile with PRODUCT_ID_STR for fixed PID build
 
 Signed-off-by: po.cheng <po.cheng@adlinktech.com>
 ---
- .../USB High Speed Electrical Test/USB_Linux_HSET.c       | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ .../USB High Speed Electrical Test/USB_Linux_HSET.c      | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
 diff --git a/General USB Examples/USB High Speed Electrical Test/USB_Linux_HSET.c b/General USB Examples/USB High Speed Electrical Test/USB_Linux_HSET.c
-index cc6af85..6b8c18b 100644
+index cc6af85..9af85ec 100644
 --- a/General USB Examples/USB High Speed Electrical Test/USB_Linux_HSET.c	
 +++ b/General USB Examples/USB High Speed Electrical Test/USB_Linux_HSET.c	
-@@ -31,7 +31,7 @@ Author: Connor Chilton <connor.chilton@microchip.com>
+@@ -31,7 +31,8 @@ Author: Connor Chilton <connor.chilton@microchip.com>
  /* the buffer sizes can exceed the USB MTU */
  #define MAX_CTL_XFER	64
  #define MAX_BULK_XFER	512
 -
-+#define STRINGIFY(s)	#s
++#define STR(s)	#s
++#define STRINGIFY(s)	STR(s)
  
  /**
   * struct my_usb_device - struct that ties USB related stuff
-@@ -69,8 +69,13 @@ int main(int argc, char **argv)
+@@ -69,9 +70,14 @@ int main(int argc, char **argv)
  	int err = 0;
  	int VENDOR_ID = 0x0424;
  	int PRODUCT_ID = 0;
@@ -31,18 +32,19 @@ index cc6af85..6b8c18b 100644
  	char PRODUCT_ID1[128] = "";
 +#endif
  
-+#ifndef PRODUCT_ID_STR
  	INPUT:
++#ifndef PRODUCT_ID_STR
  	printf("Please enter the product ID of the hub under test\n0x");
  	scanf("%s", PRODUCT_ID1);
-@@ -90,6 +95,7 @@ int main(int argc, char **argv)
+ 	printf("PRODUCT_ID1=[%s], strlen(PRODUCT_ID1)=[%d]\n", PRODUCT_ID1, strlen(PRODUCT_ID1));
+@@ -79,6 +85,7 @@ int main(int argc, char **argv)
+ 		printf("Please enter 4 digit hex only\n");
+ 		goto INPUT;
  	}
- 	PRODUCT_ID = (int)strtol(PRODUCT_ID1, NULL, 16);
- 
 +#endif
- 
- 	printf("This demo will iniate a test mode on a port.\n");
- 
+ 	int count;
+ 	char hexset[] = "0123456789ABCDEFabcdef";
+ 	printf("PRODUCT_ID1=[%s], hexset=[%s]\n", PRODUCT_ID1, hexset);
 -- 
 2.25.1
 
