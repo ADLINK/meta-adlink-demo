@@ -1,0 +1,11 @@
+[Unit]
+Description=Run once setup PGSQL user database
+After=postgresql.service
+
+[Service]
+ExecStart=su -l postgres -c "createuser adlink -s -d -r -w; createuser myuser -w; createdb mydatabase -O myuser;"
+RemainAfterExit=true
+Type=oneshot
+
+[Install]
+WantedBy=multi-user.target
