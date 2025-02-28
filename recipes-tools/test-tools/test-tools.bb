@@ -7,12 +7,11 @@ SRC_URI = "\
 	file://edid-decode \
 	file://mbw \
 	file://mdio-tool \
-	file://spidev_fdx \
-	file://spidev_test \
 	file://USB31_TX_COMPLIANCE \
 	file://USBTest \
 	file://UTest.sh \
 "
+DEPENDS = "libusb"
 
 SRC_URI:append:lec-imx8mp = " \
 	file://set_mac_address.c \
@@ -37,8 +36,6 @@ do_install() {
     install -m 0755 ${WORKDIR}/edid-decode ${D}${bindir}
     install -m 0755 ${WORKDIR}/mbw ${D}${bindir}
     install -m 0755 ${WORKDIR}/mdio-tool ${D}${bindir}
-    install -m 0755 ${WORKDIR}/spidev_fdx ${D}${bindir}
-    install -m 0755 ${WORKDIR}/spidev_test ${D}${bindir}
     install -m 0755 ${WORKDIR}/USB31_TX_COMPLIANCE ${D}${bindir}
     install -m 0755 ${WORKDIR}/USBTest ${D}${bindir}
     install -m 0755 ${WORKDIR}/UTest.sh ${D}${bindir}
@@ -54,12 +51,12 @@ do_install:append:lec-imx8mp() {
 
 do_package_qa[noexec] = "1"
 
-FILES_${PN} += " ${bindir}"
-INSANE_SKIP_${PN} = "already-stripped"
+FILES:${PN} += " ${bindir}"
+INSANE_SKIP:${PN} = "already-stripped"
 
-FILES_${PN}:append:lec-imx8mp = " ${bindir}/set_mac_address"
-FILES_${PN}:append:lec-imx8mp = " ${bindir}/hwbom_id.sh"
-FILES_${PN}:append:lec-imx8mm = " ${bindir}/uart_test"
+FILES:${PN}:append:lec-imx8mp = " ${bindir}/set_mac_address"
+FILES:${PN}:append:lec-imx8mp = " ${bindir}/hwbom_id.sh"
+FILES:${PN}:append:lec-imx8mm = " ${bindir}/uart_test"
 
-RDEPENDS_${PN}:append:lec-imx8mp = "bash i2c-tools"
+RDEPENDS:${PN}:append:lec-imx8mp = "bash i2c-tools"
 
