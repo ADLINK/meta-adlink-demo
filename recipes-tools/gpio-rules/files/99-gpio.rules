@@ -1,0 +1,2 @@
+SUBSYSTEM=="gpio*", MODE="0660", GROUP="sudo"
+
