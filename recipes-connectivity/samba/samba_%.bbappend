@@ -2,7 +2,7 @@ SAMBA_USERNAME ?= "adlink"
 SAMBA_PASSWORD ?= "PASSWORD=adlink"
 SAMBA_NTHASH = "${@'%s' % (lambda h: (h.new('md4', "${SAMBA_PASSWORD}".encode('utf-16le')).hexdigest()))(__import__('hashlib'))}"
 
-POSTINST_ONTARGET_COMMANDS ?= " \
+SAMBA_POSTINST_ONTARGET_COMMANDS ?= " \
   mkdir -p /media/share; \
   chmod -R a+rw /media/share; \
 "
@@ -54,7 +54,7 @@ do_post_install () {
 addtask post_install before do_package after do_install
 
 pkg_postinst_ontarget:${PN} () {
-	${POSTINST_ONTARGET_COMMANDS}
+	${SAMBA_POSTINST_ONTARGET_COMMANDS}
 }
 
 FILES:${PN} += "${sbindir} ${systemd_unitdir}/system ${sysconfdir}/systemd/system/multi-user.target.wants"
