@@ -40,7 +40,8 @@ do_install:append () {
   fi
 }
 
-RDEPENDS:${PN}:append = "${@ ' connman-conf' if any(nic in d.getVar('STATIC_NIC_IPV4_SETTINGS') for nic in ['en', 'eth']) else ''}"
+# Remove dependency to connman blacklist
+#RDEPENDS:${PN}:append = "${@ ' connman-conf' if any(nic in d.getVar('STATIC_NIC_IPV4_SETTINGS') for nic in ['en', 'eth']) else ''}"
 
 FILES:${PN} += "${sysconfdir}/systemd/network"
 
