@@ -1,0 +1,21 @@
+# For sp2-imx8mp eth0 & eth1 setup
+# filter table
+*filter
+:INPUT ACCEPT [140:9630]
+:FORWARD DROP [0:0]
+:OUTPUT ACCEPT [82:7676]
+-A FORWARD -d 192.168.1.42/32 -i eth0 -o eth1 -p tcp -m tcp --dport 5900 -m state --state NEW,RELATED,ESTABLISHED -j ACCEPT
+-A FORWARD -s 192.168.1.42/32 -i eth1 -o eth0 -p tcp -m tcp --sport 5900 -m state --state RELATED,ESTABLISHED -j ACCEPT
+-A FORWARD -d 192.168.1.42/32 -i eth0 -o eth1 -p tcp -m tcp --dport 80 -m state --state NEW,RELATED,ESTABLISHED -j ACCEPT
+-A FORWARD -s 192.168.1.42/32 -i eth1 -o eth0 -p tcp -m tcp --sport 80 -m state --state RELATED,ESTABLISHED -j ACCEPT
+COMMIT
+# nat table
+*nat
+:PREROUTING ACCEPT [47:3635]
+:INPUT ACCEPT [12:1079]
+:OUTPUT ACCEPT [11:694]
+:POSTROUTING ACCEPT [0:0]
+-A PREROUTING -i eth0 -p tcp -m tcp --dport 15900 -j DNAT --to-destination 192.168.1.42:5900
+-A PREROUTING -i eth0 -p tcp -m tcp --dport 8080 -j DNAT --to-destination 192.168.1.42:80
+-A POSTROUTING -d 192.168.1.42/32 -o eth1 -j MASQUERADE
+COMMIT
