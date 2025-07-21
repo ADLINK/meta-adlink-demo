@@ -81,20 +81,5 @@ IMAGE_CMD_dataimg:prepend () {
   fi
 }
 
+include ${@bb.utils.contains('IMAGE_FEATURES', 'nat', 'ip-forward.inc', '', d)}
 
-ROOTFS_POSTPROCESS_COMMAND += " ipv4forward_sysctl_config ; "
-
-ipv4forward_sysctl_config() {
-    # systemd sysctl config
-    test -d ${IMAGE_ROOTFS}${sysconfdir}/sysctl.d && \
-        echo "net.ipv4.ip_forward = 1" > ${IMAGE_ROOTFS}${sysconfdir}/sysctl.d/rpi-ipv4-forward.conf
-
-    # sysv sysctl config
-    IMAGE_SYSCTL_CONF="${IMAGE_ROOTFS}${sysconfdir}/sysctl.conf"
-    test -e ${IMAGE_ROOTFS}${sysconfdir}/sysctl.conf && \
-        sed -e "/net.ipv4.ip_forward/d" -i ${IMAGE_SYSCTL_CONF}
-    echo "net.ipv4.ip_forward = 1" >> ${IMAGE_SYSCTL_CONF}
-
-    # ensure user adlink is enabled in /etc/sudoers.d/0001_adlink
-    echo "adlink ALL=(ALL) ALL" > ${IMAGE_ROOTFS}${sysconfdir}/sudoers.d/0001_adlink
-}
