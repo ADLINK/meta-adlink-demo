@@ -48,6 +48,7 @@ PACKAGE_ARCH = "${MACHINE_ARCH}"
 
 DOCKER_IMAGE_PREFIX ?= "adlink/"
 DOCKER_COMPOSE_IMAGES ?= ""
+DOCKER_COMPOSE_OPTIONS ?= "${@bb.utils.contains('DOCKER_COMPOSE_IMAGES', 'avahi', 'LAVADISPATCHER_AVAHI_SERVICE=./ci-box-avahi/services/lava-dispatcher.service', '', d)}"
 
 # NOTE: Host Build Environment must provide docker and docker-compose commands
 
@@ -77,7 +78,7 @@ do_compile () {
 
 	bbnote "Remove existing docker image..."
 	# docker-compose build the docker image
-	for dimg in "${DOCKER_COMPOSE_IMAGES}"; do
+	for dimg in ${DOCKER_COMPOSE_IMAGES}; do
 		if $DOCKER images | grep -q -P "(^|\s)\K${DOCKER_IMAGE_PREFIX}${dimg}(?=\s|$)"; then
 			$DOCKER rmi ${DOCKER_IMAGE_PREFIX}${dimg}
 		fi
@@ -88,8 +89,9 @@ do_compile () {
 	if [ -z "${DOCKER_COMPOSE_IMAGES}" ]; then
 		${DOCKER} compose -f ${S}/docker-compose.yml build
 	else
-		for dimg in "${DOCKER_COMPOSE_IMAGES}"; do
-			${DOCKER} compose -f ${S}/docker-compose.yml build ${dimg}
+		echo "${DOCKER_COMPOSE_OPTIONS}" > envfile
+		for dimg in ${DOCKER_COMPOSE_IMAGES}; do
+			${DOCKER} compose --env-file envfile -f ${S}/docker-compose.yml build ${dimg}
 		done
 	fi
 
