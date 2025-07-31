@@ -16,7 +16,7 @@ IMAGE_INSTALL = "\
 	${CORE_IMAGE_EXTRA_INSTALL} \
 	${CORE_IMAGE_BASE_INSTALL} \
 	docker-ce \
-	python3-docker-compose \
+	${@bb.utils.contains('DISTRO_CODENAME', 'kirkstone', 'python3-docker-compose', 'docker-compose', d)} \
     python3-distutils \
 	openflow \
 	kernel-modules \
