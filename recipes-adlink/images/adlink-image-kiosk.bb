@@ -11,7 +11,7 @@ python () {
 
 BASE_IMAGE ?= "imx-image-full"
 BASE_IMAGE_INCLUDE_PATH ?= "../../../meta-imx/meta-sdk/dynamic-layers/qt6-layer/recipes-fsl/images/"
-require ${BASE_IMAGE_INCLUDE_PATH}${BASE_IMAGE}.bb
+include ${BASE_IMAGE_INCLUDE_PATH}${BASE_IMAGE}.bb
 
 CORE_IMAGE_EXTRA_INSTALL += "chromium-ozone-wayland"
 
