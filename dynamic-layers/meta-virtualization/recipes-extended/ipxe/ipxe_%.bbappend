@@ -1,6 +1,7 @@
-SRCREV = "2acdc92994e7aca397b0d24b112e4973e82e0f91"
+SRCREV = "f7a1e9ef8e1dc22ebded786507b872a45e3fb05d"
 
 SRC_URI:remove = " \
+    file://ipxe-fix-hostcc-nopie-cflags.patch \
     file://ipxe-intel-Avoid-spurious-compiler-warning-on-GCC-10.patch \
     file://ipxe-golan-Add-explicit-type-casts-for-nodnic_queue_pair_.patch \
     file://build-be-explicit-about-fcommon-compiler-directive.patch \
