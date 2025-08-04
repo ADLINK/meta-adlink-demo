@@ -213,6 +213,11 @@ SUMMARY:packagegroup-adlink-ci = "Adlink Continuous Integration Support"
 RDEPENDS:packagegroup-adlink-ci = " \
     python3 \
     python3-robotframework \
+    python3-robotframework-seriallibrary \
+    python3-robotframework-pabot \
+    python3-wxgtk4 \
+    python3-pyserial \
+    python3-natsort \
 "
 
 #
