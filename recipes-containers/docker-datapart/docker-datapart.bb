@@ -179,10 +179,11 @@ do_compile () {
 	# Generate the data filesystem (i.e. /var/lib/docker) using sibling container with docker daemon
 	RANDOM=$$
 	IMAGE_NAME="docker-datapart-$RANDOM"
-	CONTAINER_NAME="${DOCKERHUB_IMAGE}-${DOCKERHUB_TAG}-$RANDOM"
 	$DOCKER rmi ${IMAGE_NAME} > /dev/null 2>&1 || true
 	$DOCKER build -t ${IMAGE_NAME} -f ${WORKDIR}/Dockerfile ${WORKDIR}
-	$DOCKER run --privileged --rm multiarch/qemu-user-static --reset -p yes
+	if [ $(uname -m) = "x86_64" ]; then
+		$DOCKER run --privileged --rm multiarch/qemu-user-static --reset -p yes
+	fi
 	$DOCKER run --privileged --rm \
 		-e STORAGE_DRIVER=${CONTAINER_STORAGE_DRIVER_TYPE} \
 		-e USER_ID=$(id -u) -e USER_GID=$(id -u) \
@@ -200,9 +201,10 @@ do_compile () {
 		-e PARTITION_SIZE="${EXPORT_DOCKER_PARTITION_SIZE}" \
 		-e PARTITION_IMAGE="${EXPORT_DOCKER_PARTITION_IMAGE}" \
 		-v /sys/fs/cgroup:/sys/fs/cgroup:ro \
+		-v /var/run/docker.sock:/var/run/docker.sock \
 		-v ${SHAREDSRC}/container:/src \
 		-v ${SHAREDBUILD}:/build \
-		--name ${CONTAINER_NAME} ${IMAGE_NAME}
+		${IMAGE_NAME}
 	$DOCKER rmi ${IMAGE_NAME}
 }
 

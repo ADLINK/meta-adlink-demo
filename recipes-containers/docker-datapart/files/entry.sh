@@ -11,6 +11,8 @@ PARTITION_SIZE=${PARTITION_SIZE:-8192}
 PARTITION_IMAGE=${PARTITION_IMAGE:-docker-data-partition.img}
 CONTAINER_SUFFIX=${CONTAINER_SUFFIX:-.tar.gz}
 IMAGE_SUFFIX=".tar"
+DOCKER_NAME=$(hostname)
+DOCKER_PID=$(docker inspect ${DOCKER_NAME} | grep Pid -m1 | cut -d':' -f2 | cut -d',' -f1)
 
 finish() {
 	# Make all files owned by the build system
@@ -39,7 +41,8 @@ do
         exit 1
     fi
 done
-echo "[INFO] Start building docker-datapart..."
+
+echo "[INFO] Start building docker-datapart... ${DOCKER_NAME}:${DOCKER_PID}"
 echo "[INFO] Passed in Params:"
 echo "[INFO]        DOCKERHUB_REGISTRY: ${DOCKERHUB_REGISTRY}, DOCKERHUB_USER: ${DOCKERHUB_USER}, DOCKERHUB_PASSWORD: ${DOCKERHUB_PASSWORD}"
 echo "[INFO]        TARGET_PLATFORM: ${TARGET_PLATFORM}, TARGET_REPOSITORY: ${TARGET_REPOSITORY}, TARGET_TAG: ${TARGET_TAG}"
@@ -66,7 +69,11 @@ fi
 # Pull in arch specific hello-world image and tag it healthcheck-image
 if [ -n "${HEALTHCHECK_REPOSITORY}" ]; then
   echo "[INFO] Pulling ${HEALTHCHECK_REPOSITORY}:latest..."
-  docker pull --platform="${TARGET_PLATFORM}" "${HEALTHCHECK_REPOSITORY}"
+  if [ $(uname -m) = "x86_64" ]; then
+    docker pull --platform="${TARGET_PLATFORM}" "${HEALTHCHECK_REPOSITORY}"
+  else
+    docker pull "${HEALTHCHECK_REPOSITORY}"
+  fi
   docker tag "${HEALTHCHECK_REPOSITORY}" ${HEALTHCHECK_EXPORT_IMAGE//${IMAGE_SUFFIX}}
   docker rmi "${HEALTHCHECK_REPOSITORY}"
   docker save ${HEALTHCHECK_EXPORT_IMAGE//${IMAGE_SUFFIX}} > ${BUILD}/${HEALTHCHECK_EXPORT_IMAGE}
@@ -88,9 +95,9 @@ echo "[INFO] Show Docker Images..."
 docker images
 
 echo "[INFO] Stop building docker-datapart..."
-kill -TERM "$(cat /var/run/docker.pid)"
+ps -p "$DOCKER_PID" && kill -TERM "$DOCKER_PID"
 # don't let wait() error out and crash the build if the docker daemon has already been stopped
-wait "$(cat /var/run/docker.pid)" || true
+wait "$DOCKER_PID" || true
 
 # Export the final data filesystem
 echo "[INFO] Compress docker data partition..."
