@@ -126,7 +126,7 @@ python () {
 
 # multiple dependancies on container images
 DEPENDS += "${LOCAL_CONTAINER_IMAGES}"
-do_postfetch[deptask] = "do_deploy"
+do_postfetch[deptask] = "do_populate_sysroot"
 do_postfetch () {
 	mkdir -p ${S}/container
 	if [ -z "${LOCAL_CONTAINER_IMAGES}" ]; then
@@ -134,10 +134,10 @@ do_postfetch () {
 	else
 		echo "EXPORT_CONTAINER_IMAGES: ${EXPORT_CONTAINER_IMAGES}"
 		for img in ${EXPORT_CONTAINER_IMAGES}; do
-			if [ -e ${TMPDIR}/deploy/images/${MACHINE}/${img} ]; then
-				install -m 0644 ${TMPDIR}/deploy/images/${MACHINE}/${img} ${S}/container/${img}
+			if [ -e ${RECIPE_SYSROOT}/containers/${img} ]; then
+				install -m 0644 ${RECIPE_SYSROOT}/containers/${img} ${S}/container/${img}
 			else
-				bbfatal "${TMPDIR}/deploy/images/${MACHINE}/${img} not found.\nplease bitbake ${img} separately..."
+				bbfatal "${RECIPE_SYSROOT}/containers/${img} not found.\nplease bitbake ${img} separately..."
 			fi
 		done
 	fi

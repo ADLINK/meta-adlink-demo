@@ -65,8 +65,13 @@ if [ -n "${TARGET_REPOSITORY}" -a -n "${TARGET_TAG}" ]; then
       echo "[INFO] Pulling ${TARGET_REPOSITORY}:${TARGET_TAG}..."
       docker pull "${TARGET_REPOSITORY}:${TARGET_TAG}" || echo "[WARN] Unabe to pull from dockerhub, skip..."
     else
-      echo "[INFO] Pulling --platform ${TARGET_PLATFORM} ${TARGET_REPOSITORY}:${TARGET_TAG}..."
-      docker pull --platform="${TARGET_PLATFORM}" "${TARGET_REPOSITORY}:${TARGET_TAG}" || echo "[WARN] Unabe to pull from dockerhub, skip..."
+      if [ $(uname -m) = "x86_64" ]; then
+          echo "[INFO] Pulling --platform ${TARGET_PLATFORM} ${TARGET_REPOSITORY}:${TARGET_TAG}..."
+          docker pull --platform="${TARGET_PLATFORM}" "${TARGET_REPOSITORY}:${TARGET_TAG}" || echo "[WARN] Unabe to pull from dockerhub, skip..."
+      else
+          echo "[INFO] Pulling ${TARGET_REPOSITORY}:${TARGET_TAG}..."
+          docker pull "${TARGET_REPOSITORY}:${TARGET_TAG}" || echo "[WARN] Unabe to pull from dockerhub, skip..."
+      fi
     fi
 fi
 
