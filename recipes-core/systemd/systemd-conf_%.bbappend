@@ -12,10 +12,14 @@ do_install:append () {
     install -d ${D}${sysconfdir}/systemd/network
     install -m 0644 ${WORKDIR}/wlan0.rpi3 ${D}${sysconfdir}/systemd/network/50-wlan0.network
     install -m 0644 ${WORKDIR}/veth.rpi3 ${D}${sysconfdir}/systemd/network/50-veth.network
-  fi
-  if [ "${MACHINE}" = "sp2-imx8mp" -a ${WIFI_IFNAME} = "wlan0" ]; then
+  elif [ "${MACHINE}" = "sp2-imx8mp" ]; then
     install -d ${D}${sysconfdir}/systemd/network
-    install -m 0644 ${WORKDIR}/wlan0.rpi3 ${D}${sysconfdir}/systemd/network/50-wlan0.network
+    if [ ${WIFI_IFNAME} = "wlan0" ]; then
+      install -m 0644 ${WORKDIR}/wlan0.rpi3 ${D}${sysconfdir}/systemd/network/50-wlan0.network
+    elif [ ${WIFI_IFNAME} = "mlan0" ]; then
+      install -m 0644 ${WORKDIR}/wlan0.rpi3 ${D}${sysconfdir}/systemd/network/50-mlan0.network
+      sed -i "s|wlan0|mlan0|g" ${D}${sysconfdir}/systemd/network/50-mlan0.network
+    fi
   fi
   if [ -n "${STATIC_NIC_IPV4_SETTINGS}" ]; then
     for nicip in ${STATIC_NIC_IPV4_SETTINGS}; do
