@@ -1,3 +1,4 @@
+include ${@bb.utils.contains('IMAGE_FEATURES', 'hidecursor', 'transparent-cursor.inc', '', d)}
 include ${@bb.utils.contains('IMAGE_FEATURES', 'locale', 'locale-conf.inc', '', d)}
 
 # setup unique hostname, i.e. machine + 1st mac address, at first boot up
