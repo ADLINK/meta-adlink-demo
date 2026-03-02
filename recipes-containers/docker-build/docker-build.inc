@@ -67,11 +67,6 @@ do_configure () {
 }
 
 do_compile () {
-	# At this point we really need Internet connectivity for building the docker image
-	if [ "x${@connected(d)}" != "xyes" ]; then
-		bbfatal "docker-build: Can't build as there is no Internet connectivity on this host."
-	fi
-
 	# We force the PATH to be the standard linux path in order to use the host's
 	# docker daemon instead of the result of docker-native. This avoids version mismatches
 	DOCKER=$(PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" which docker)
@@ -112,22 +107,21 @@ do_compile () {
 
 inherit deploy
 do_deploy () {
+	install -d ${DEPLOY_DIR_IMAGE}/containers
 	for dimg in ${DOCKER_COMPOSE_IMAGES}; do
 		if which ${COMPRESSCMD} ; then
 			if [ -f ${B}/${dimg}.${IMAGE_COMPRESS_TYPE} ]; then
-				install -m 0644 ${B}/${dimg}.${IMAGE_COMPRESS_TYPE} ${DEPLOYDIR}/docker-build-${dimg}.${IMAGE_COMPRESS_TYPE}
+				install -m 0644 ${B}/${dimg}.${IMAGE_COMPRESS_TYPE} ${DEPLOY_DIR_IMAGE}/containers/${dimg}.${IMAGE_COMPRESS_TYPE}
 			else
 				bbfatal "${B}/${dimg}.${IMAGE_COMPRESS_TYPE} not found."
 			fi
 		else
 			if [ -f ${B}/${dimg}.tar ]; then
-				install -m 0644 ${B}/${dimg}.tar ${DEPLOYDIR}/docker-build-${dimg}.tar
+				install -m 0644 ${B}/${dimg}.tar ${DEPLOY_DIR_IMAGE}/containers/${dimg}.tar
 			else
 				bbfatal "${B}/${dimg}.tar not found."
 			fi
 		fi
 	done
 }
-addtask deploy before do_package after do_compile
-
-FILES:${PN} += "*.tar"
+addtask deploy before do_package after do_install
