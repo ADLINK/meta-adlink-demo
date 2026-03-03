@@ -125,19 +125,18 @@ python () {
 }
 
 # multiple dependancies on container images
-DEPENDS += "${LOCAL_CONTAINER_IMAGES}"
-do_postfetch[deptask] = "do_populate_sysroot"
+do_postfetch[deptask] = "docker-build-lava-dispatcher:do_deploy"
 do_postfetch () {
 	mkdir -p ${S}/container
-	if [ -z "${LOCAL_CONTAINER_IMAGES}" ]; then
+	if [ -z "${EXPORT_CONTAINER_IMAGES}" ]; then
 		bbwarn "Skip bundling local built containers..."
 	else
-		echo "EXPORT_CONTAINER_IMAGES: ${EXPORT_CONTAINER_IMAGES}"
+		bbnote "Exported container images: ${EXPORT_CONTAINER_IMAGES}"
 		for img in ${EXPORT_CONTAINER_IMAGES}; do
-			if [ -e ${RECIPE_SYSROOT}/containers/${img} ]; then
-				install -m 0644 ${RECIPE_SYSROOT}/containers/${img} ${S}/container/${img}
+			if [ -e ${DEPLOY_DIR_IMAGE}/containers/${img} ]; then
+				install -m 0644 ${DEPLOY_DIR_IMAGE}/containers/${img} ${S}/container/${img}
 			else
-				bbfatal "${RECIPE_SYSROOT}/containers/${img} not found.\nplease bitbake ${img} separately..."
+				bbfatal "${DEPLOY_DIR_IMAGE}/containers/${img} not found.\nplease bitbake ${img} separately..."
 			fi
 		done
 	fi
@@ -161,10 +160,6 @@ do_compile () {
 	fi
 	if [ -z "${EXPORT_DOCKER_PARTITION_IMAGE}" ]; then
 		bbfatal "docker-datapart: EXPORT_DOCKER_PARTITION_IMAGE needs to have an image name."
-	fi
-	# At this point we really need Internet connectivity for building the docker image
-	if [ "x${@connected(d)}" != "xyes" ]; then
-		bbfatal "docker-datapart: Can't compile as there is no Internet connectivity on this host."
 	fi
 
 	# We force the PATH to be the standard linux path in order to use the host's
