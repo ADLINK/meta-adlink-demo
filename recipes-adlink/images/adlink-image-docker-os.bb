@@ -15,9 +15,9 @@ LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda
 IMAGE_INSTALL = "\
 	${CORE_IMAGE_EXTRA_INSTALL} \
 	${CORE_IMAGE_BASE_INSTALL} \
-	docker-ce \
-	${@bb.utils.contains('DISTRO_CODENAME', 'kirkstone', 'python3-docker-compose', 'docker-compose', d)} \
-    python3-distutils \
+	docker-moby \
+	python3-docker-compose \
+	python3-distutils-extra \
 	openflow \
 	kernel-modules \
 	git \
