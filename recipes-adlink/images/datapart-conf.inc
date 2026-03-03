@@ -9,6 +9,8 @@ python () {
         bb.fatal("No docker-datapart or image-datapart in DEPENDS list\n")
 }
 
+INSTALLER_TARGET_IMAGE ?= ""
+
 # WIC template required configurations
 WKS_FILE = "image-rootfs-data.wks.in"
 WKS_FILE:raspberrypi3 = "sdimage-rootfs-data.wks.in"
