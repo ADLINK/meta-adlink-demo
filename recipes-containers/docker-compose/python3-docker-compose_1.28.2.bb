@@ -11,11 +11,12 @@ SRC_URI[sha256sum] = "2f148b590414915d029dad7551f4cdf0b03a774dc9baa674480217236d
 
 SRC_URI += "file://0001-setup.py-remove-maximum-version-requirements.patch \
             file://0001-setup.py-import-fastentrypoints.patch \
+            file://0001-import-shutil-to-replace-find_executable.patch \
            "
 
 DEPENDS += "${PYTHON_PN}-fastentrypoints-native"
 
-RDEPENDS_${PN} = "\
+RDEPENDS:${PN} = "\
     ${PYTHON_PN}-cached-property \
     ${PYTHON_PN}-certifi \
     ${PYTHON_PN}-chardet \

@@ -17,7 +17,6 @@ IMAGE_INSTALL = "\
 	${CORE_IMAGE_BASE_INSTALL} \
 	docker-moby \
 	python3-docker-compose \
-	python3-distutils-extra \
 	openflow \
 	kernel-modules \
 	git \
