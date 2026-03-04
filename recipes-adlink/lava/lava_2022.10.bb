@@ -11,6 +11,7 @@ S = "${WORKDIR}/git"
 
 SRCSERVER ?= "git://GitLab.Adlinktech.com/EV/lava.git;protocol=http"
 SRCBRANCH ?= "2022.10"
+SRCREV ?= "c1101f34293d43a3c16042c44e54b37107ab4fdb"
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
