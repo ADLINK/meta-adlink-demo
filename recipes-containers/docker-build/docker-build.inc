@@ -48,7 +48,8 @@ PACKAGE_ARCH = "${MACHINE_ARCH}"
 
 DOCKER_IMAGE_PREFIX ?= "adlink/"
 DOCKER_COMPOSE_IMAGES ?= ""
-DOCKER_COMPOSE_OPTIONS ?= "${@bb.utils.contains('DOCKER_COMPOSE_IMAGES', 'avahi', 'LAVADISPATCHER_AVAHI_SERVICE=./ci-box-avahi/services/lava-dispatcher.service', '', d)}"
+DOCKER_COMPOSE_OPTIONS ?= "${@ 'LAVADISPATCHER_AVAHI_SERVICE=./ci-box-avahi/services/lava-dispatcher.service' if 'avahi' in d.getVar('DOCKER_COMPOSE_IMAGES') and 'lava_dispatcher' in d.getVar('DOCKER_COMPOSE_IMAGES') else '' }"
+DOCKER_COMPOSE_OPTIONS:append ?= "${@ ' LAVADISERVER_AVAHI_SERVICE=./ci-box-avahi/services/lava-server.service' if 'avahi' in d.getVar('DOCKER_COMPOSE_IMAGES') and 'lava_server' in d.getVar('DOCKER_COMPOSE_IMAGES') else '' }"
 
 # NOTE: Host Build Environment must provide docker and docker-compose commands
 
@@ -84,9 +85,12 @@ do_compile () {
 	if [ -z "${DOCKER_COMPOSE_IMAGES}" ]; then
 		${DOCKER} compose -f ${S}/docker-compose.yml build
 	else
-		echo "${DOCKER_COMPOSE_OPTIONS}" > envfile
+		for sub in ${DOCKER_COMPOSE_OPTIONS}; do echo "$sub" >> ${B}/envfile; done
 		for dimg in ${DOCKER_COMPOSE_IMAGES}; do
-			${DOCKER} compose --env-file envfile -f ${S}/docker-compose.yml build ${dimg}
+			DCTNR=$(echo ${PN} | sed 's,docker-build-,,g')
+			if echo "${dimg}" | grep -q ${DCTNR}; then
+				${DOCKER} compose --env-file ${B}/envfile -f ${S}/docker-compose.yml build ${dimg}
+			fi
 		done
 	fi
 
@@ -100,7 +104,7 @@ do_compile () {
 				$DOCKER image save "${DOCKER_IMAGE_PREFIX}${dimg}" -o ${B}/${dimg}.tar
 			fi
 		else
-			bbfatal "Can't find built docker image."
+			bbwarn "Can't find built docker image: ${dmg}"
 		fi
 	done
 }
@@ -113,13 +117,13 @@ do_deploy () {
 			if [ -f ${B}/${dimg}.${IMAGE_COMPRESS_TYPE} ]; then
 				install -m 0644 ${B}/${dimg}.${IMAGE_COMPRESS_TYPE} ${DEPLOY_DIR_IMAGE}/containers/${dimg}.${IMAGE_COMPRESS_TYPE}
 			else
-				bbfatal "${B}/${dimg}.${IMAGE_COMPRESS_TYPE} not found."
+				bbwarn "${B}/${dimg}.${IMAGE_COMPRESS_TYPE} not found."
 			fi
 		else
 			if [ -f ${B}/${dimg}.tar ]; then
 				install -m 0644 ${B}/${dimg}.tar ${DEPLOY_DIR_IMAGE}/containers/${dimg}.tar
 			else
-				bbfatal "${B}/${dimg}.tar not found."
+				bbwarn "${B}/${dimg}.tar not found."
 			fi
 		fi
 	done
