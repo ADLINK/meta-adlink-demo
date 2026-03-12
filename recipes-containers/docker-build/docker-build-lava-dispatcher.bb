@@ -132,7 +132,7 @@ do_install:append () {
 	install -m 0755 ${S}/udev_reload.sh ${D}/home/adlink/
 	# copy docker-comppose.yml for docker-compose-service
 	if [ -f ${S}/docker-compose.yml ]; then
-		install -m 0644 ${S}/docker-compose.yml ${D}/home/adlink/docker-compose.yml
+		install -m 0644 ${S}/docker-compose.yml ${D}/home/adlink/docker-compose-dispatcher.yml
 	fi
 	# add/enable the udev-forward.service to systemd
 	# replace syslog.LOG_DEBUG to 7 (from syslog.h) as yocto has no python3-syslog

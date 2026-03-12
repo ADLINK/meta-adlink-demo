@@ -52,7 +52,7 @@ python reconfigure_lava_server() {
 do_configure:prepend () {
 	sed -i 's/lava_master=remote_master/lava_master=remote_address/g' ${S}/ci-box-gen.py
 	cd ${S}
-	./ci-box-gen.sh slaves
+	./ci-box-gen.sh masters
 }
 
 DOCKER_BASE_IMAGES ?= "lavasoftware/lava-server:2025.04"
@@ -98,7 +98,7 @@ do_install:append () {
 
 	# copy docker-comppose.yml for docker-compose-service
 	if [ -f ${S}/docker-compose.yml ]; then
-		install -m 0644 ${S}/docker-compose.yml ${D}/home/adlink/docker-compose.yml
+		install -m 0644 ${S}/docker-compose.yml ${D}/home/adlink/docker-compose-server.yml
 	fi
 
 	install -d ${D}${systemd_unitdir}/system/
