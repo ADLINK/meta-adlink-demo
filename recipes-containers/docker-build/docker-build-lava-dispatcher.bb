@@ -15,7 +15,7 @@ B = "${WORKDIR}/build"
 
 include docker-build.inc
 
-DOCKER_COMPOSE_IMAGES ?= "lava-dispatcher"
+DOCKER_BUILD_IMAGES ?= "lava-dispatcher"
 
 DEPENDS:append = " ipxe-bin"
 do_ipxe_fetch () {
@@ -45,7 +45,7 @@ python reconfigure_lava_dispatcher() {
     default = None
     srcdir = d.getVar("S")
     tgtplatform = d.getVar("TARGET_PLATFORM")
-    tgtimages = d.getVar("DOCKER_COMPOSE_IMAGES")
+    tgtimages = d.getVar("DOCKER_BUILD_IMAGES")
     if tgtplatform in ('linux/arm64', 'linux/amd64'):
       with open("%s/ci-box-conf.yaml" % srcdir, "r+") as fd:
         import yaml
@@ -54,7 +54,7 @@ python reconfigure_lava_dispatcher() {
           # clear all default slave from ci-box-conf.yaml file
           if "default_slave" in slave:
             slave['default_slave'] = False
-          # set defaul slave if DOCKER_COMPOSE_IMAGES match slave name or if only one slave
+          # set defaul slave if DOCKER_BUILD_IMAGES match slave name or if only one slave
           for tgtimage in tgtimages.split():
             if tgtimage == slave['name'] or len(ciboxconf["slaves"]) == 1:
               slave['arch'] = tgtplatform

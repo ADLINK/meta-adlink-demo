@@ -47,9 +47,9 @@ require ../docker-common.inc
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 
 DOCKER_IMAGE_PREFIX ?= "adlink/"
-DOCKER_COMPOSE_IMAGES ?= ""
-DOCKER_COMPOSE_OPTIONS ?= "${@ 'LAVADISPATCHER_AVAHI_SERVICE=./ci-box-avahi/services/lava-dispatcher.service' if 'avahi' in d.getVar('DOCKER_COMPOSE_IMAGES') and 'lava_dispatcher' in d.getVar('DOCKER_COMPOSE_IMAGES') else '' }"
-DOCKER_COMPOSE_OPTIONS:append ?= "${@ ' LAVADISERVER_AVAHI_SERVICE=./ci-box-avahi/services/lava-server.service' if 'avahi' in d.getVar('DOCKER_COMPOSE_IMAGES') and 'lava_server' in d.getVar('DOCKER_COMPOSE_IMAGES') else '' }"
+DOCKER_BUILD_IMAGES ?= ""
+DOCKER_BUILD_OPTIONS ?= "${@ 'LAVADISPATCHER_AVAHI_SERVICE=./ci-box-avahi/services/lava-dispatcher.service' if 'avahi' in d.getVar('DOCKER_BUILD_IMAGES') and 'lava_dispatcher' in d.getVar('DOCKER_BUILD_IMAGES') else '' }"
+DOCKER_BUILD_OPTIONS:append ?= "${@ ' LAVADISERVER_AVAHI_SERVICE=./ci-box-avahi/services/lava-server.service' if 'avahi' in d.getVar('DOCKER_BUILD_IMAGES') and 'lava_server' in d.getVar('DOCKER_BUILD_IMAGES') else '' }"
 
 # NOTE: Host Build Environment must provide docker and docker-compose commands
 
@@ -74,7 +74,7 @@ do_compile () {
 
 	bbnote "Remove existing docker image..."
 	# docker-compose build the docker image
-	for dimg in ${DOCKER_COMPOSE_IMAGES}; do
+	for dimg in ${DOCKER_BUILD_IMAGES}; do
 		if $DOCKER images | grep -q -P "(^|\s)\K${DOCKER_IMAGE_PREFIX}${dimg}(?=\s|$)"; then
 			$DOCKER rmi ${DOCKER_IMAGE_PREFIX}${dimg}
 		fi
@@ -82,11 +82,11 @@ do_compile () {
 
 	bbnote "Starting building docker image..."
 	# docker-compose build the docker image
-	if [ -z "${DOCKER_COMPOSE_IMAGES}" ]; then
+	if [ -z "${DOCKER_BUILD_IMAGES}" ]; then
 		${DOCKER} compose -f ${S}/docker-compose.yml build
 	else
-		for sub in ${DOCKER_COMPOSE_OPTIONS}; do echo "$sub" >> ${B}/envfile; done
-		for dimg in ${DOCKER_COMPOSE_IMAGES}; do
+		for sub in ${DOCKER_BUILD_OPTIONS}; do echo "$sub" >> ${B}/envfile; done
+		for dimg in ${DOCKER_BUILD_IMAGES}; do
 			DCTNR=$(echo ${PN} | sed 's,docker-build-,,g')
 			if echo "${dimg}" | grep -q ${DCTNR}; then
 				${DOCKER} compose --env-file ${B}/envfile -f ${S}/docker-compose.yml build ${dimg}
@@ -96,7 +96,7 @@ do_compile () {
 
 	bbnote "Saving built docker image..."
 	# Export the Docker Image
-	for dimg in ${DOCKER_COMPOSE_IMAGES}; do
+	for dimg in ${DOCKER_BUILD_IMAGES}; do
 		if $DOCKER images | grep ${dimg} ; then
 			if which ${COMPRESSCMD} ; then
 				$DOCKER image save "${DOCKER_IMAGE_PREFIX}${dimg}" | ${COMPRESSCMD} > ${B}/${dimg}.${IMAGE_COMPRESS_TYPE}
@@ -112,7 +112,7 @@ do_compile () {
 inherit deploy
 do_deploy () {
 	install -d ${DEPLOY_DIR_IMAGE}/containers
-	for dimg in ${DOCKER_COMPOSE_IMAGES}; do
+	for dimg in ${DOCKER_BUILD_IMAGES}; do
 		if which ${COMPRESSCMD} ; then
 			if [ -f ${B}/${dimg}.${IMAGE_COMPRESS_TYPE} ]; then
 				install -m 0644 ${B}/${dimg}.${IMAGE_COMPRESS_TYPE} ${DEPLOY_DIR_IMAGE}/containers/${dimg}.${IMAGE_COMPRESS_TYPE}

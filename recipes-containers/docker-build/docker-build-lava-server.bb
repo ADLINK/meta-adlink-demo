@@ -15,14 +15,14 @@ B = "${WORKDIR}/build"
 
 include docker-build.inc
 
-DOCKER_COMPOSE_IMAGES ?= "lava-server"
+DOCKER_BUILD_IMAGES ?= "lava-server"
 
 do_configure[prefuncs] += "reconfigure_lava_server"
 python reconfigure_lava_server() {
     default = None
     srcdir = d.getVar("S")
     tgtplatform = d.getVar("TARGET_PLATFORM")
-    tgtimages = d.getVar("DOCKER_COMPOSE_IMAGES")
+    tgtimages = d.getVar("DOCKER_BUILD_IMAGES")
     if tgtplatform in ('linux/arm64', 'linux/amd64'):
       with open("%s/ci-box-conf.yaml" % srcdir, "r+") as fd:
         import yaml
