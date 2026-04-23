@@ -1,6 +1,7 @@
 # Add background setting to [shell] section and update chromium launcher
 
 WESTON_BACKGROUND_IMAGE ?= "adlink.jpg"
+WESTON_SERVICE_DEBUG_FLAG ?= ""
 REMOTE_PKI_KEYNAME ?= "remote-desktop"
 REMOTE_PKI_CHALLENGE ?= "${MACHINE}"
 CERT_COUNTRY ?= "TW"
@@ -38,7 +39,7 @@ update_weston_owner() {
 
 update_weston_remote() {
     # setup weston service as remote desktop connection.
-    sed -E "s|(ExecStart=.*)|#\1\nExecStart=/usr/bin/weston --log=\${XDG_RUNTIME_DIR}/weston.log --modules=systemd-notify.so,screen-share.so|g" -i ${D}${systemd_system_unitdir}/weston.service
+    sed -E "s|(ExecStart=.*)|#\1\nExecStart=/usr/bin/weston ${WESTON_SERVICE_DEBUG_FLAG} --log=\${XDG_RUNTIME_DIR}/weston.log --modules=systemd-notify.so,screen-share.so|g" -i ${D}${systemd_system_unitdir}/weston.service
     # for screen-share, run command as
     # /usr/bin/weston --backend=vnc-backend.so
     #                 --vnc-tls-cert=/etc/remote-desktop/keys/remote-desktop.crt
