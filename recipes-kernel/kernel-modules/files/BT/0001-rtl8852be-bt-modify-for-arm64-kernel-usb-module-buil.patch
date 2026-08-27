@@ -1,0 +1,55 @@
+From 9ef53c7f8de740c69e83bdef539c8aa3cc9ba6bf Mon Sep 17 00:00:00 2001
+From: "po.cheng" <po.cheng@adlinktech.com>
+Date: Thu, 27 Aug 2026 15:54:57 +0800
+Subject: [PATCH] rtl8852be: bt: modify for arm64 kernel usb module build
+
+Signed-off-by: po.cheng <po.cheng@adlinktech.com>
+---
+ usb/bluetooth_usb_driver/Makefile | 26 ++++++++++++++++++++++++--
+ 1 file changed, 24 insertions(+), 2 deletions(-)
+
+diff --git a/usb/bluetooth_usb_driver/Makefile b/usb/bluetooth_usb_driver/Makefile
+index 7143954..acf19e2 100644
+--- a/usb/bluetooth_usb_driver/Makefile
++++ b/usb/bluetooth_usb_driver/Makefile
+@@ -1,13 +1,35 @@
++EXTRA_CFLAGS += $(USER_EXTRA_CFLAGS)
++EXTRA_CFLAGS += -O1
++#EXTRA_CFLAGS += -O3
++#EXTRA_CFLAGS += -Wall
++#EXTRA_CFLAGS += -Wextra
++#EXTRA_CFLAGS += -Werror
++#EXTRA_CFLAGS += -pedantic
++#EXTRA_CFLAGS += -Wshadow -Wpointer-arith -Wcast-qual -Wstrict-prototypes -Wmissing-prototypes
++
++EXTRA_CFLAGS += -Wno-unused-variable
++#EXTRA_CFLAGS += -Wno-unused-value
++EXTRA_CFLAGS += -Wno-unused-label
++#EXTRA_CFLAGS += -Wno-unused-parameter
++#EXTRA_CFLAGS += -Wno-unused-function
++EXTRA_CFLAGS += -Wno-unused
++#EXTRA_CFLAGS += -Wno-uninitialized
++
+ ifneq ($(KERNELRELEASE),)
+ 	obj-m := rtk_btusb.o
+ 	rtk_btusb-y = rtk_coex.o rtk_misc.o rtk_bt.o
+ else
+-	PWD := $(shell pwd)
++	export M ?= $(shell pwd)
+ 	KVER := $(shell uname -r)
+ 	KDIR := /lib/modules/$(KVER)/build
++	KSRC := $(KERNEL_SRC)
+ 
+ all:
+-	$(MAKE) -C $(KDIR) M=$(PWD) modules
++#	$(MAKE) -C $(KDIR) M=$(PWD) modules
++	$(MAKE) ARCH=$(ARCH) CROSS_COMPILE=$(CROSS_COMPILE) -C $(KSRC) M=$(M) modules
++
++modules_install:
++	$(MAKE) INSTALL_MOD_STRIP=1 M=$(M) -C $(KSRC) modules_install
+ 
+ clean:
+ 	rm -rf *.o *.mod.c *.mod.o *.ko *.symvers *.order *.a
+-- 
+2.34.1
+
