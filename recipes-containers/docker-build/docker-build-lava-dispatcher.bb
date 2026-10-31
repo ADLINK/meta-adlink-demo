@@ -138,6 +138,7 @@ do_install:append () {
 	# replace syslog.LOG_DEBUG to 7 (from syslog.h) as yocto has no python3-syslog
 	sed -i 's|import syslog||g' ${S}/docker-udev-tools/udev-forward.py
 	sed -i 's|syslog.LOG_DEBUG|7|g' ${S}/docker-udev-tools/udev-forward.py
+	sed -i 's|debug=True|debug=False|g' ${S}/docker-udev-tools/udev-serial.py
 	cp -rf ${S}/docker-udev-tools ${D}/home/adlink/
 	sed -i 's|After=multi-user.target|After=multi-user.target docker-compose.service|g' ${S}/udev-forward.service
 	sed -i 's|/home/jenkins/.*udev-forward|/home/adlink/docker-udev-tools/udev-forward|g' ${S}/udev-forward.service

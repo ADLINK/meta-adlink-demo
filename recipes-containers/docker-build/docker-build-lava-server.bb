@@ -73,7 +73,7 @@ addtask clear_base before do_configure after do_unpack
 do_configure[postfuncs] += "pull_lava_server"
 
 pull_lava_server () {
-	# At this point we need Internet connectivity for pulling lava-dispatcher
+	# At this point we need Internet connectivity for pulling lava-server
 	DOCKER=$(PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" which docker)
 	if [ -f ${S}/configfile ]; then
 		for tgtimage in ${DOCKER_BASE_IMAGES}; do
@@ -95,6 +95,11 @@ do_install:append () {
 	# copy the ci-box-lava-master/ to /home/adlink/ci-box-lava-master
 	install -d ${D}/home/adlink/
 	cp -rf ${S}/ci-box-lava-master ${D}/home/adlink/
+	cp -rf ${S}/ci-box-postgres ${D}/home/adlink/
+	cp -rf ${S}/ci-box-avahi ${D}/home/adlink/
+	rm -f ${D}/home/adlink/ci-box-avahi/services/network-storage.service
+	rm -f ${D}/home/adlink/ci-box-avahi/services/stfp-ssh.service
+	rm -f ${D}/home/adlink/ci-box-avahi/services/ssh.service
 
 	# copy docker-comppose.yml for docker-compose-service
 	if [ -f ${S}/docker-compose.yml ]; then
