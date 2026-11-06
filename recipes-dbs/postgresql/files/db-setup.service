@@ -1,11 +1,13 @@
 [Unit]
 Description=Run once setup PGSQL user database
+DefaultDependencies=no
 After=postgresql.service
 
 [Service]
-ExecStart=su -l postgres -c "createuser adlink -s -d -r -w; createuser myuser -w; createdb mydatabase -O myuser;"
-RemainAfterExit=true
 Type=oneshot
+ExecStart=su -l postgres -c "createuser adlink -s -d -r -w; createuser myuser -w; createdb mydatabase -O myuser;"
+ExecStartPost=#BASE_BINDIR#/systemctl --no-reload disable db-setup.service
+RemainAfterExit=yes
 
 [Install]
 WantedBy=multi-user.target

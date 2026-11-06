@@ -39,6 +39,13 @@ do_install:append () {
     ln -sf ${systemd_unitdir}/system/db-setup.service ${D}${sysconfdir}/systemd/system/multi-user.target.wants/db-setup.service
 }
 
+do_post_install () {
+    if [ -f ${D}${systemd_unitdir}/system/db-setup.service ]; then
+      sed -e 's,#BASE_BINDIR#,${base_bindir},g' -i ${D}${systemd_unitdir}/system/db-setup.service
+    fi
+}
+addtask post_install before do_package after do_install
+
 pkg_postinst_ontarget:${PN} () {
     #su -l postgres -c "initdb -D /var/lib/postgresql/data;"
     postgresql-setup initdb
