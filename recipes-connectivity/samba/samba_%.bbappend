@@ -1,3 +1,5 @@
+FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
+
 SAMBA_USERNAME ?= "adlink"
 SAMBA_PASSWORD ?= "PASSWORD=adlink"
 SAMBA_NTHASH = "${@'%s' % (lambda h: (h.new('md4', "${SAMBA_PASSWORD}".encode('utf-16le')).hexdigest()))(__import__('hashlib'))}"
@@ -7,7 +9,29 @@ SAMBA_POSTINST_ONTARGET_COMMANDS ?= " \
   chmod -R a+rw /media/share; \
 "
 
-FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
+SMBUSER_SERVICE_OVERRIDE ?= ""
+SMBUSER_SERVICE_OVERRIDE:sota = "\
+[Unit]\n\
+After=local-fs.target var.mount\n\
+Requires=local-fs.target\n\
+"
+
+SMB_TMPFILES_CONF ?= ""
+SMB_TMPFILES_CONF:sota = "\
+d /var/rootdirs/media 0777 root root -\n\
+d /var/rootdirs/media/share 0777 root root -\n\
+d /var/rootdirs/media/share/DEVICE 0777 root root -\n\
+d /var/rootdirs/media/share/PMIIMAGE 0777 root root -\n\
+d /var/rootdirs/media/share/PMIJUDGE 0777 root root -\n\
+d /var/rootdirs/media/share/PMIDATA 0777 root root -\n\
+d /var/rootdirs/media/share/PTPA 0777 root root -\n\
+"
+
+SMBUSER_TMPFILES_CONF ?= ""
+SMBUSER_TMPFILES_CONF:sota = "\
+d /var/lib/samba 0755 root root -\n\
+d /var/lib/samba/private 0755 root root -\n\
+"
 
 SRC_URI += " \
 	file://smb-user \
@@ -26,6 +50,17 @@ do_install:append () {
 	# enable the smb-user.service
 	install -d ${D}${sysconfdir}/systemd/system/multi-user.target.wants
 	ln -sf ${systemd_unitdir}/system/smb-user.service ${D}${sysconfdir}/systemd/system/multi-user.target.wants/smb-user.service
+    if [ -n "${SMBUSER_SERVICE_OVERRIDE}" ]; then
+      install -d ${D}${sysconfdir}/systemd/system/smb-user.service.d/
+      echo "${SMBUSER_SERVICE_OVERRIDE}" | tee -a ${D}${sysconfdir}/systemd/system/smb-user.service.d/override.conf
+    fi
+    if [ -n "${SMBUSER_TMPFILES_CONF}" ]; then
+      install -d ${D}${sysconfdir}/tmpfiles.d/
+      echo "${SMBUSER_TMPFILES_CONF}" | tee -a ${D}${sysconfdir}/tmpfiles.d/smbuser-ostree.conf
+    fi
+    if [ -f ${D}${sysconfdir}/tmpfiles.d/samba.conf ]; then
+      echo "${SMB_TMPFILES_CONF}" | tee -a ${D}${sysconfdir}/tmpfiles.d/samba.conf
+    fi
 }
 
 do_post_install () {
@@ -57,5 +92,5 @@ pkg_postinst_ontarget:${PN} () {
 	${SAMBA_POSTINST_ONTARGET_COMMANDS}
 }
 
-FILES:${PN} += "${sbindir} ${systemd_unitdir}/system ${sysconfdir}/systemd/system/multi-user.target.wants"
+FILES:${PN} += "${sbindir} ${systemd_unitdir}/system ${sysconfdir}/systemd/system/multi-user.target.wants ${sysconfdir}/systemd/system/rpcbind.service.d/ ${sysconfdir}/tmpfiles.d/"
 
