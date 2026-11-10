@@ -1,0 +1,13 @@
+[Unit]
+Description=Generate Dynamic Hostname
+DefaultDependencies=no
+After=local-fs.target
+
+[Service]
+Type=oneshot
+ExecStart=+/bin/sh -c 'hostname sp2-imx8mp-$(cat /sys/class/net/$(ls /sys/class/net/ | grep -m 1 -e "en" -e "eth")/address | sed "s/://g")'
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
+
